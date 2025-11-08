@@ -59,11 +59,6 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
       return;
     }
 
-    if (!description.trim()) {
-      setError("Description is required");
-      return;
-    }
-
     if (odds < 0 || odds > 100) {
       setError("Odds must be between 0 and 100");
       return;
@@ -75,7 +70,7 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
       await createBet(
         {
           name: name.trim(),
-          description: description.trim(),
+          ...(description.trim() && { description: description.trim() }),
           odds_for_yes: odds,
           people_involved: peopleInvolved,
         },
@@ -129,7 +124,7 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={description}
@@ -167,7 +162,8 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
           <div className="space-y-2">
             <Label>People Involved (Optional)</Label>
             <p className="text-xs text-muted-foreground mb-2">
-              Select users who are involved in the outcome. They won't be able to bet on this.
+              Select users who are involved in the outcome. They won&apos;t be
+              able to bet on this.
             </p>
             <div className="flex flex-wrap gap-2">
               {users.map((user) => (

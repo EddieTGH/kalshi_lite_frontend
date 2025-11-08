@@ -80,7 +80,7 @@ export interface RegisterRequest {
 
 export interface CreateBetRequest {
   name: string;
-  description: string;
+  description?: string;
   odds_for_yes: number;
   people_involved?: number[];
 }
