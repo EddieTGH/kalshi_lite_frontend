@@ -5,12 +5,14 @@ A betting application built with Next.js 16, TypeScript, Tailwind CSS, and ShadC
 ## Features
 
 ### User Features
+
 - **Password-Based Authentication**: Simple 3-character password login
 - **Bets Tab**: View, place, and manage bets on various outcomes
 - **Leaderboard**: See rankings of all users by total money (available + invested)
 - **Mobile-Responsive**: Fully responsive design that works on phones and desktops
 
 ### Admin Features
+
 - **Create Bets**: Add new bets with custom odds and involved parties
 - **View Bets**: Monitor all bets with admin controls
 - **Lock Betting**: Globally lock/unlock betting to prevent changes
@@ -128,6 +130,7 @@ kalshi_lite_frontend/
    ```
 
 2. **Import Project in Vercel**
+
    - Go to [vercel.com](https://vercel.com)
    - Click "Add New..." → "Project"
    - Import your repository
@@ -179,9 +182,9 @@ kalshi_lite_frontend/
 
 ## Environment Variables
 
-| Variable | Description | Required | Example |
-|----------|-------------|----------|---------|
-| `NEXT_PUBLIC_API_BASE_URL` | Backend API base URL | Yes | `http://localhost:3001/api` (dev)<br/>`https://api.yourapp.com/api` (prod) |
+| Variable                   | Description          | Required | Example                                                                    |
+| -------------------------- | -------------------- | -------- | -------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_BASE_URL` | Backend API base URL | Yes      | `http://localhost:3001/api` (dev)<br/>`https://api.yourapp.com/api` (prod) |
 
 **Important**: The `NEXT_PUBLIC_` prefix makes the variable accessible in the browser. This is required for client-side API calls.
 
@@ -190,14 +193,17 @@ kalshi_lite_frontend/
 The frontend expects a backend API with the following endpoints:
 
 ### Authentication
+
 - `POST /users/login` - Login user
 - `POST /users/register` - Register new user (optional)
 
 ### Users
+
 - `GET /users` - Get all users (leaderboard)
 - `GET /users/:id` - Get user by ID
 
 ### Bets
+
 - `POST /bets` - Create bet (admin)
 - `PUT /bets/:id` - Update bet (admin)
 - `DELETE /bets/:id` - Delete bet (admin)
@@ -205,10 +211,12 @@ The frontend expects a backend API with the following endpoints:
 - `PUT /bets/:id/end` - End bet (admin)
 
 ### User Placed Bets
+
 - `POST /user_placed_bets` - Place bet
 - `DELETE /user_placed_bets/:id` - Delete placed bet
 
 ### Settings
+
 - `GET /settings/lock_status` - Get lock status
 - `PUT /settings/lock_bets` - Update lock status (admin)
 
@@ -217,18 +225,21 @@ See `api_contract.md` for full API documentation.
 ## Features & Business Rules
 
 ### Betting Rules
+
 1. Users cannot bet on bets where they are involved in the outcome
 2. Minimum bet amount is $1
 3. Users can only bet with available funds (not invested money)
 4. Bets can be removed before they are locked
 
 ### Admin Controls
+
 1. Admins can create, update, and delete bets
 2. Admins can lock betting globally (prevents placing/removing bets)
 3. Admins can end bets and select the outcome
 4. Payouts are automatically calculated and distributed
 
 ### Payout Calculation
+
 - **Winners**: `payout = amount_bet × (1 / odds_percentage)`
 - **Losers**: `payout = 0` (lose entire bet)
 - **Profit**: `payout - amount_bet`
@@ -236,6 +247,7 @@ See `api_contract.md` for full API documentation.
 ## Mobile Optimization
 
 The app is fully responsive and optimized for mobile devices:
+
 - Dynamic font sizes (text-sm, text-base, text-lg)
 - Responsive grids (grid-cols-2, sm:grid-cols-3)
 - Flexible layouts (flex-wrap, flex-col on mobile)
@@ -256,6 +268,7 @@ The app is fully responsive and optimized for mobile devices:
 ### Security Headers
 
 The `vercel.json` configuration includes security headers:
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `X-XSS-Protection: 1; mode=block`
@@ -299,13 +312,13 @@ Ensure `.env.local` exists and contains `NEXT_PUBLIC_API_BASE_URL`.
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
+| Script              | Description                  |
+| ------------------- | ---------------------------- |
+| `npm run dev`       | Start development server     |
+| `npm run build`     | Build for production         |
+| `npm run start`     | Start production server      |
 | `npm run typecheck` | Run TypeScript type checking |
-| `npm run lint` | Run ESLint |
+| `npm run lint`      | Run ESLint                   |
 
 ## Contributing
 

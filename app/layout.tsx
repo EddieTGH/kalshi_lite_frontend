@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kalshi Lite",
-  description: "Place bets with friends",
+  title: "Odds on Shaan",
+  description: "Place your bets",
 };
 
 export default function RootLayout({

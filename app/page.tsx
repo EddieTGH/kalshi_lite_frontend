@@ -7,7 +7,13 @@ import { login as loginApi } from "./api/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -29,7 +35,9 @@ export default function LoginPage() {
 
     // Validate password format
     if (!/^[A-Z0-9]{3}$/.test(password)) {
-      setError("Password must be 3 uppercase alphanumeric characters (A-Z, 0-9)");
+      setError(
+        "Password must be 3 uppercase alphanumeric characters (A-Z, 0-9)"
+      );
       return;
     }
 
@@ -43,7 +51,9 @@ export default function LoginPage() {
       if (err.response?.status === 401) {
         setError("Invalid password");
       } else {
-        setError(err.response?.data?.message || "An error occurred. Please try again.");
+        setError(
+          err.response?.data?.message || "An error occurred. Please try again."
+        );
       }
     } finally {
       setLoading(false);
@@ -62,8 +72,13 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-beige px-4 py-8">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-primary">Kalshi Lite</CardTitle>
-          <CardDescription className="text-base">Enter your password to continue</CardDescription>
+          <CardTitle className="text-3xl font-bold text-primary">
+            Odds on Shaan
+          </CardTitle>
+          <CardDescription className="text-base">
+            Enter your password to continue (look in your Partiful DMs for the
+            password)
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,9 +95,7 @@ export default function LoginPage() {
                 autoComplete="off"
                 autoFocus
               />
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
+              {error && <p className="text-sm text-destructive">{error}</p>}
             </div>
             <Button
               type="submit"

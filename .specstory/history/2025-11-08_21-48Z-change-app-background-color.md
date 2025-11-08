@@ -439,7 +439,16 @@ Lines added: 1, lines removed: 1
 
 ---
 
+<think><details><summary>Thought Process</summary>
+Perfect! I've added borders between the tabs by adding `border-r border-r-black last:border-r-0` to the TabsTrigger component. This will:
+- Add a black right border to each tab
+- Remove the right border from the last tab (so there's no double border with the container)
 
+This creates vertical dividers between each tab in the navigation.</details></think>
+
+---
+
+Perfect! I've added black borders between the tabs by adding `border-r border-r-black last:border-r-0` to each tab trigger. This creates vertical dividers between each tab, with the last tab not having a right border to avoid a double border with the container edge.
 
 ---
 
