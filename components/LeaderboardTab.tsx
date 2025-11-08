@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +30,10 @@ export function LeaderboardTab({ password }: LeaderboardTabProps) {
     }
   };
 
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -54,7 +58,7 @@ export function LeaderboardTab({ password }: LeaderboardTabProps) {
 
       {users.length === 0 && !loading && !error && (
         <Card className="p-8 text-center text-muted-foreground">
-          Click refresh to load the leaderboard
+          No users found
         </Card>
       )}
 
