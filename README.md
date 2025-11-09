@@ -8,7 +8,7 @@ Kalshi Lite is a simple, fun way for everyone to place bets on various actions t
 
 ## Note
 
-The [backend](https://github.com/EddieTGH/kalshi_lite_backend) deployment is currently inactive. This means the production app link won't be functional.
+The [backend](https://github.com/EddieTGH/kalshi_lite_backend) deployment is currently inactive. This means the production app won't be functional.
 
 ## Key Features
 
