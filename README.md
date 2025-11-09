@@ -1,26 +1,39 @@
-# Kalshi Lite Frontend
+# Kalshi Lite
 
-A betting application built with Next.js 16, TypeScript, Tailwind CSS, and ShadCN UI. Users can place bets with friends, track their balances, and compete on a leaderboard.
+A lightweight betting application built for my roommates's birthday party. Think [Kalshi](https://kalshi.com/), but simplified for casual betting among friends.
 
-## Features
+## Overview
 
-### User Features
+Kalshi Lite is a simple, fun way for everyone to place bets on various actions that could occur at a party and see who comes out on top at the end of the night. Leaderboard tracks people's performance throughout the night. Built with Next.js, TypeScript, and Tailwind CSS.
 
-- **Password-Based Authentication**: Simple 3-character password login
-- **Bets Tab**: View, place, and manage bets on various outcomes
-- **Leaderboard**: See rankings of all users by total money (available + invested)
-- **Mobile-Responsive**: Fully responsive design that works on phones and desktops
+## Key Features
 
-### Admin Features
+### For Users
 
-- **Create Bets**: Add new bets with custom odds and involved parties
-- **View Bets**: Monitor all bets with admin controls
-- **Lock Betting**: Globally lock/unlock betting to prevent changes
-- **End Bets**: Finalize bets and automatically process payouts
+- **Browse & Place Bets**: View all available bets with real-time odds and place bets with your available balance
+- **Manage Your Bets**: See all your active bets and remove them before they're locked
+- **Live Leaderboard**: Track rankings of all players by total money (available + invested)
+- **Simple Login**: 3-character password authentication (perfect for party settings - no complex accounts needed)
+- **Mobile-First**: Fully responsive design optimized for phones
+
+### For Admins
+
+- **Create Custom Bets**: Add new prediction markets with custom odds and involved parties
+- **Lock Betting**: Globally freeze all betting activity when needed
+- **Resolve Bets**: End bets, select outcomes, and automatically calculate/distribute payouts
+- **View All Bets**: Monitor all bets across the platform with admin controls
+
+### Technical Features
+
+- **Real-time Updates**: Axios-based API client with automatic data fetching
+- **State Management**: React Context for authentication and user state
+- **Type Safety**: Full TypeScript coverage across the application
+- **Modern UI**: ShadCN UI components with custom orange (#ED7D3A) and green (#4D9078) theming
+- **Secure Headers**: XSS protection, frame options, and content-type security
 
 ## Tech Stack
 
-- **Framework**: Next.js 16.0.1 (App Router, Turbopack)
+- **Framework**: Next.js 16 (App Router, Turbopack)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
 - **UI Components**: ShadCN UI
@@ -28,314 +41,158 @@ A betting application built with Next.js 16, TypeScript, Tailwind CSS, and ShadC
 - **State Management**: React Context API
 - **Icons**: Lucide React
 
-## Color Palette
-
-- **Primary (Orange)**: `#ED7D3A`
-- **Secondary (Green)**: `#4D9078`
-- **Beige Background**: `#F5F5DC`
-
-## Prerequisites
-
-- Node.js 18+ (recommended: v20+)
-- npm or yarn
-- Backend API running (default: `http://localhost:3001/api`)
-
-## Local Development
-
-### 1. Install Dependencies
-
-```bash
-npm install
-```
-
-### 2. Configure Environment Variables
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local` and set your backend API URL:
-
-```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
-```
-
-### 3. Start Development Server
-
-```bash
-npm run dev
-```
-
-The app will be available at `http://localhost:3000` (or the next available port).
-
-### 4. Build for Production
-
-```bash
-npm run build
-npm run start
-```
-
-### 5. Type Checking
-
-```bash
-npm run typecheck
-```
-
-## Project Structure
+## Directory Structure
 
 ```
 kalshi_lite_frontend/
 ├── app/
-│   ├── api/                    # API layer (Axios-based)
-│   │   ├── base.ts            # Base configuration
-│   │   ├── users.ts           # User endpoints
-│   │   ├── bets.ts            # Bet endpoints
-│   │   ├── userPlacedBets.ts  # User placed bet endpoints
-│   │   └── settings.ts        # Settings endpoints
+│   ├── api/              # API layer (Axios-based)
+│   │   ├── base.ts       # Base URL config, auth headers, axios instance
+│   │   ├── users.ts      # User registration, login, fetch all users
+│   │   ├── bets.ts       # Create, update, delete, end bets (admin)
+│   │   ├── userPlacedBets.ts  # Place & remove bets (users)
+│   │   └── settings.ts   # Global lock/unlock betting
 │   ├── dashboard/
-│   │   └── page.tsx           # Main dashboard with tabs
-│   ├── page.tsx               # Login page
-│   ├── layout.tsx             # Root layout
-│   └── globals.css            # Global styles
+│   │   └── page.tsx      # Main app - tabs for Bets/Leaderboard/Admin
+│   ├── page.tsx          # Login page
+│   ├── layout.tsx        # Root layout with AuthProvider
+│   └── globals.css       # Global styles + Tailwind imports
 ├── components/
-│   ├── ui/                    # ShadCN UI components
-│   ├── BetCard.tsx            # Bet display card
-│   ├── PlaceBetDialog.tsx     # Place bet modal
-│   ├── BetsTab.tsx            # Bets tab for users
-│   ├── LeaderboardTab.tsx     # Leaderboard tab
-│   ├── CreateBetsTab.tsx      # Create bets (admin)
-│   └── ViewBetsTab.tsx        # View bets (admin)
+│   ├── ui/               # ShadCN components (Button, Dialog, Card, etc.)
+│   ├── BetCard.tsx       # Individual bet display card
+│   ├── PlaceBetDialog.tsx  # Modal for placing bets
+│   ├── BetsTab.tsx       # User view - browse & place bets
+│   ├── LeaderboardTab.tsx  # Rankings of all users
+│   ├── CreateBetsTab.tsx   # Admin - create new bets
+│   └── ViewBetsTab.tsx     # Admin - view/manage all bets
 ├── lib/
-│   ├── auth-context.tsx       # Authentication context
-│   ├── types.ts               # TypeScript interfaces
-│   └── utils.ts               # Utility functions
-├── .env.example               # Environment variables template
-├── .env.local                 # Local environment variables (git-ignored)
-├── vercel.json                # Vercel configuration
-└── package.json
+│   ├── auth-context.tsx  # Authentication state (localStorage-based)
+│   ├── types.ts          # TypeScript interfaces (User, Bet, etc.)
+│   └── utils.ts          # Utility functions (cn for class merging)
+└── .env.example          # Template for environment variables
 ```
 
-## Deploying to Vercel
+### How It Works
 
-### Option 1: Deploy via Vercel Dashboard (Recommended)
+1. **Authentication**: Users log in with a 3-character password (stored in localStorage for demo simplicity)
+2. **Betting Flow**:
+   - Admin creates a bet (e.g., "Will it rain tomorrow? Yes: 30%, No: 70%")
+   - Users browse bets and place wagers using their available balance
+   - Money is locked in once bet is placed
+   - Admin ends the bet and selects the outcome
+   - Payouts are automatically calculated and distributed to winners
+3. **Payout Math**: Winners get `bet_amount × (1 / odds_percentage)` - losers get nothing
 
-1. **Push your code to GitHub/GitLab/Bitbucket**
+## How to Run
 
-   ```bash
-   git add .
-   git commit -m "Prepare for Vercel deployment"
-   git push origin main
-   ```
+```bash
+# Install dependencies
+npm install
 
-2. **Import Project in Vercel**
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local and set NEXT_PUBLIC_API_BASE_URL to your backend URL
 
-   - Go to [vercel.com](https://vercel.com)
-   - Click "Add New..." → "Project"
-   - Import your repository
+# Start development server
+npm run dev
 
-3. **Configure Environment Variables**
+# App runs at http://localhost:3000
+```
 
-   In the Vercel dashboard, add the following environment variable:
+### Additional Commands
 
-   - **Key**: `NEXT_PUBLIC_API_BASE_URL`
-   - **Value**: Your production backend API URL (e.g., `https://your-backend-api.com/api`)
+```bash
+npm run build      # Build for production
+npm run start      # Start production server
+npm run typecheck  # Run TypeScript checks
+npm run lint       # Run ESLint
+```
 
-4. **Deploy**
-   - Click "Deploy"
-   - Vercel will automatically build and deploy your app
+### Environment Variables
 
-### Option 2: Deploy via Vercel CLI
+| Variable                   | Description          | Example                                                                     |
+| -------------------------- | -------------------- | --------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_BASE_URL` | Backend API endpoint | `http://localhost:3001/api` (dev)<br/>`https://your-backend.com/api` (prod) |
 
-1. **Install Vercel CLI**
+## Additional Info
 
-   ```bash
-   npm i -g vercel
-   ```
+### Authentication & Security
 
-2. **Login to Vercel**
+**Note**: This app uses simple password-based authentication stored in localStorage. This is intentional for a party/demo setting where ease-of-use trumps security. **Not recommended for production use** with real money.
 
-   ```bash
-   vercel login
-   ```
+For production, consider:
 
-3. **Deploy**
+- JWT tokens with expiration
+- Secure HTTP-only cookies
+- Password hashing on backend
+- Rate limiting
+- CORS restrictions
 
-   ```bash
-   vercel
-   ```
+### Kalshi Inspiration
 
-4. **Add Environment Variables**
-
-   ```bash
-   vercel env add NEXT_PUBLIC_API_BASE_URL
-   ```
-
-   Enter your production backend API URL when prompted.
-
-5. **Deploy to Production**
-
-   ```bash
-   vercel --prod
-   ```
-
-## Environment Variables
-
-| Variable                   | Description          | Required | Example                                                                    |
-| -------------------------- | -------------------- | -------- | -------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_BASE_URL` | Backend API base URL | Yes      | `http://localhost:3001/api` (dev)<br/>`https://api.yourapp.com/api` (prod) |
-
-**Important**: The `NEXT_PUBLIC_` prefix makes the variable accessible in the browser. This is required for client-side API calls.
-
-## Backend Requirements
-
-The frontend expects a backend API with the following endpoints:
-
-### Authentication
-
-- `POST /users/login` - Login user
-- `POST /users/register` - Register new user (optional)
-
-### Users
-
-- `GET /users` - Get all users (leaderboard)
-- `GET /users/:id` - Get user by ID
-
-### Bets
-
-- `POST /bets` - Create bet (admin)
-- `PUT /bets/:id` - Update bet (admin)
-- `DELETE /bets/:id` - Delete bet (admin)
-- `GET /bets/user/:user_id` - Get bets for user
-- `PUT /bets/:id/end` - End bet (admin)
-
-### User Placed Bets
-
-- `POST /user_placed_bets` - Place bet
-- `DELETE /user_placed_bets/:id` - Delete placed bet
-
-### Settings
-
-- `GET /settings/lock_status` - Get lock status
-- `PUT /settings/lock_bets` - Update lock status (admin)
-
-See `api_contract.md` for full API documentation.
-
-## Features & Business Rules
+This project is inspired by [Kalshi](https://kalshi.com/), a regulated prediction market exchange. Kalshi Lite is a simplified, unofficial version built for personal use among friends. It is **not affiliated with or endorsed by** Kalshi.
 
 ### Betting Rules
 
-1. Users cannot bet on bets where they are involved in the outcome
-2. Minimum bet amount is $1
-3. Users can only bet with available funds (not invested money)
-4. Bets can be removed before they are locked
+- Users cannot bet on outcomes they're involved in (conflict of interest)
+- Minimum bet: $1
+- Users can only bet with available funds (not invested money)
+- Bets can be removed before global lock
+- Admin can lock betting to prevent changes before resolution
 
-### Admin Controls
+### Deployment
 
-1. Admins can create, update, and delete bets
-2. Admins can lock betting globally (prevents placing/removing bets)
-3. Admins can end bets and select the outcome
-4. Payouts are automatically calculated and distributed
+The app is configured for Vercel deployment (see `vercel.json`). Backend must be deployed separately and accessible via HTTPS in production.
 
-### Payout Calculation
+## Future Improvements
 
-- **Winners**: `payout = amount_bet × (1 / odds_percentage)`
-- **Losers**: `payout = 0` (lose entire bet)
-- **Profit**: `payout - amount_bet`
+Based on user feedback from the birthday party:
 
-## Mobile Optimization
+### Bet Discovery & Filtering
 
-The app is fully responsive and optimized for mobile devices:
+- **Admin View Bets**:
 
-- Dynamic font sizes (text-sm, text-base, text-lg)
-- Responsive grids (grid-cols-2, sm:grid-cols-3)
-- Flexible layouts (flex-wrap, flex-col on mobile)
-- Touch-friendly buttons and inputs
-- No fixed pixel widths (uses rem, %, vh/vw)
+  - Add filter by people involved in the bet
+  - Replace "Active/All Bets" toggle with "Active/Resolved" filter for better clarity
 
-## Security Considerations
+- **User View Bets**:
+  - Add filter to show bets by involvement status ("Bets I can join" vs "Bets I've already placed")
+  - Show which bets you've already bet on more prominently
 
-### For Production Deployment
+### Real-time Updates
 
-1. **HTTPS Only**: Always use HTTPS in production
-2. **Environment Variables**: Never commit `.env.local` or expose API keys
-3. **CORS Configuration**: Configure your backend to only accept requests from your Vercel domain
-4. **Authentication**: Consider implementing JWT tokens for production instead of simple password auth
-5. **Rate Limiting**: Implement rate limiting on the backend API
-6. **Input Validation**: All inputs are validated on both frontend and backend
+- **Available Money**: Update user's available balance immediately after placing/removing a bet (currently requires page refresh)
+- **Leaderboard Auto-refresh**: Automatically refresh leaderboard every minute instead of manual refresh button
 
-### Security Headers
+### Leaderboard Improvements
 
-The `vercel.json` configuration includes security headers:
+- Change "Available Money" label to "Liquidated Money" for clarity
 
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
+### Resolved Bets Enhancement
 
-## Troubleshooting
+- **Detailed Breakdown**: Add dropdown to show who bet on which side and how much per person
+- **Outcome Highlighting**: Highlight the winning outcome in a different color on resolved bets
+- **Notifications**: Send notification when bet ends: "Bet_NAME ended. Outcome: YES. Winners: [list]"
 
-### Build Errors
+### Bet Management
 
-**Issue**: TypeScript errors during build
+- **Void Bets**: Add ability to void a bet and automatically refund all participants
 
-```bash
-npm run typecheck
-```
+### Technical Improvements
 
-**Issue**: Missing environment variables
-
-Ensure `.env.local` exists and contains `NEXT_PUBLIC_API_BASE_URL`.
-
-### API Connection Issues
-
-**Issue**: Cannot connect to backend
-
-1. Check that `NEXT_PUBLIC_API_BASE_URL` is set correctly
-2. Verify backend is running and accessible
-3. Check browser console for CORS errors
-4. Ensure backend allows requests from your frontend domain
-
-### Vercel Deployment Issues
-
-**Issue**: Build fails on Vercel
-
-1. Check Vercel build logs
-2. Ensure all dependencies are in `package.json`
-3. Verify environment variables are set in Vercel dashboard
-
-**Issue**: API calls fail in production
-
-1. Verify `NEXT_PUBLIC_API_BASE_URL` is set in Vercel
-2. Check that backend API is accessible from Vercel's servers
-3. Ensure CORS is configured on backend
-
-## Scripts
-
-| Script              | Description                  |
-| ------------------- | ---------------------------- |
-| `npm run dev`       | Start development server     |
-| `npm run build`     | Build for production         |
-| `npm run start`     | Start production server      |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm run lint`      | Run ESLint                   |
+- WebSocket support for real-time updates across all clients
+- Push notifications for bet endings and payouts
+- Historical stats: win/loss ratio, total profit/loss, betting patterns
+- Export betting history to CSV
 
 ## Contributing
 
-1. Create a feature branch
-2. Make your changes
-3. Run `npm run typecheck` and `npm run build`
-4. Test thoroughly on both desktop and mobile
-5. Submit a pull request
+This is a personal project, but feel free to fork and adapt for your own use!
 
 ## License
 
-Private project
-
-## Support
-
-For issues or questions, please contact the development team.
+MIT - built with ❤️ for friends who love betting
 
 ---
 
-**Built with** ❤️ **using Next.js and ShadCN UI**
+**Questions or issues?** Open an issue or contact me directly.

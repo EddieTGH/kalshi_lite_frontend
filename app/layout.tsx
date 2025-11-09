@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Odds on Shaan",
+  title: "Kalshi Lite",
   description: "Place your bets",
 };
 

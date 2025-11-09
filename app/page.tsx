@@ -73,11 +73,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-primary">
-            Odds on Shaan
+            Kalshi Lite
           </CardTitle>
           <CardDescription className="text-base">
-            Enter your password to continue (look in your Partiful DMs for the
-            password)
+            Enter your password to continue
           </CardDescription>
         </CardHeader>
         <CardContent>
