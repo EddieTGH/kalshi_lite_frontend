@@ -1,10 +1,14 @@
-# Kalshi Lite
+# [Kalshi Lite](https://kalshi-lite-frontend.vercel.app/)
 
 A lightweight betting application built for my roommates's birthday party. Think [Kalshi](https://kalshi.com/), but simplified for casual betting among friends.
 
 ## Overview
 
 Kalshi Lite is a simple, fun way for everyone to place bets on various actions that could occur at a party and see who comes out on top at the end of the night. Leaderboard tracks people's performance throughout the night. Built with Next.js, TypeScript, and Tailwind CSS.
+
+## Note
+
+The [backend](https://github.com/EddieTGH/kalshi_lite_backend) deployment is currently inactive. This means the production app link won't be functional.
 
 ## Key Features
 
