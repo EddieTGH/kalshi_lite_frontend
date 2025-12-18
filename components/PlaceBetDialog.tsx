@@ -22,7 +22,7 @@ interface PlaceBetDialogProps {
   password: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onSuccess: () => Promise<void>; // Make this async to wait for refresh
   availableMoney: number;
   onMoneyChange: (newMoney: number) => void;
 }
@@ -79,7 +79,10 @@ export function PlaceBetDialog({
       );
       // Update available money immediately
       onMoneyChange(response.user_money_remaining);
-      onSuccess();
+
+      // Wait for refresh to complete before closing modal
+      await onSuccess();
+
       onOpenChange(false);
       setAmount("");
     } catch (err: any) {
@@ -90,7 +93,12 @@ export function PlaceBetDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(open) => {
+      // Prevent closing while loading
+      if (!loading) {
+        onOpenChange(open);
+      }
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{bet.name}</DialogTitle>
@@ -175,6 +183,7 @@ export function PlaceBetDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
+            disabled={loading}
             className="flex-1 sm:flex-initial"
           >
             Cancel

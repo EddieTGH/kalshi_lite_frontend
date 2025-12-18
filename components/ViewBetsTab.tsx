@@ -87,6 +87,27 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
     }
   };
 
+  // Refresh bets without showing loading spinner (silent refresh)
+  const refreshBets = async () => {
+    try {
+      const [betsData, membersData] = await Promise.all([
+        getBetsForUser(userId, partyId, password),
+        getPartyMembers(partyId, password),
+      ]);
+      setBets(betsData);
+      setPartyMembers(membersData);
+
+      // Set current user's available money
+      const currentUser = membersData.find((m) => m.user_id === userId);
+      if (currentUser) {
+        setAvailableMoney(currentUser.money);
+      }
+    } catch (err: any) {
+      // Silently fail or show a toast notification instead of disrupting the UI
+      console.error("Failed to refresh bets:", err);
+    }
+  };
+
   useEffect(() => {
     fetchBets();
   }, [userId, partyId, password]); // Re-fetch when party changes
@@ -125,7 +146,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
       );
       setEndBetDialogOpen(false);
       setSelectedBetId(null);
-      fetchBets();
+      refreshBets(); // Silent refresh - no loading spinner
 
       // Show detailed results dialog
       setBetEndedResult(result);
@@ -245,7 +266,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
                 partyId={partyId}
                 password={password}
                 betsLocked={betsLocked}
-                onBetPlaced={fetchBets}
+                onBetPlaced={refreshBets}
                 showEndButton={true}
                 onEndBet={handleEndBetClick}
                 availableMoney={availableMoney}

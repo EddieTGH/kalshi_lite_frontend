@@ -16,7 +16,7 @@ interface BetCardProps {
   partyId: number; // Party ID is now required
   password: string;
   betsLocked: boolean;
-  onBetPlaced: () => void;
+  onBetPlaced: () => Promise<void>; // Make this async to wait for refresh
   showEndButton?: boolean;
   onEndBet?: (betId: number) => void;
   availableMoney: number;
@@ -61,7 +61,9 @@ export function BetCard({
       );
       // Update available money immediately
       onMoneyChange(response.user_money_remaining);
-      onBetPlaced();
+
+      // Wait for refresh to complete before hiding "Removing..." state
+      await onBetPlaced();
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to remove bet");
     } finally {
