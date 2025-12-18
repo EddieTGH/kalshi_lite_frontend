@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BetWithPlacement } from "@/lib/types";
+import { BetWithPlacement, PartyMember } from "@/lib/types";
 import { getBetsForUser } from "@/app/api/bets";
 import { getLockStatus } from "@/app/api/settings";
+import { getPartyMembers } from "@/app/api/parties";
 import { BetCard } from "./BetCard";
+import { BetFilters, BetFilterState } from "./BetFilters";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -17,22 +19,31 @@ interface BetsTabProps {
 
 export function BetsTab({ userId, partyId, password }: BetsTabProps) {
   const [bets, setBets] = useState<BetWithPlacement[]>([]);
+  const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [betsLocked, setBetsLocked] = useState(false);
-  const [showAll, setShowAll] = useState(false);
 
-  // Fetch bets and lock status for the current party
+  // Filter state
+  const [filters, setFilters] = useState<BetFilterState>({
+    peopleInvolved: [],
+    resolveStatus: "all",
+    investedStatus: "all",
+  });
+
+  // Fetch bets, lock status, and party members for the current party
   const fetchBets = async () => {
     setLoading(true);
     setError("");
     try {
-      const [betsData, lockData] = await Promise.all([
+      const [betsData, lockData, membersData] = await Promise.all([
         getBetsForUser(userId, partyId, password),
         getLockStatus(partyId, password),
+        getPartyMembers(partyId, password),
       ]);
       setBets(betsData);
       setBetsLocked(lockData.bets_locked);
+      setPartyMembers(membersData);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to load bets");
     } finally {
@@ -44,9 +55,38 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
     fetchBets();
   }, [userId, partyId, password]); // Re-fetch when party changes
 
-  const activeBets = bets.filter((bet) => bet.in_progress);
-  const resolvedBets = bets.filter((bet) => !bet.in_progress);
-  const displayBets = showAll ? bets : activeBets;
+  // Apply filters to bets
+  const applyFilters = (betsToFilter: BetWithPlacement[]) => {
+    let filtered = betsToFilter;
+
+    // Filter by people involved
+    if (filters.peopleInvolved.length > 0) {
+      filtered = filtered.filter((bet) => {
+        // Check if any of the selected people are involved in this bet
+        return filters.peopleInvolved.some((personId) =>
+          bet.people_involved.includes(personId)
+        );
+      });
+    }
+
+    // Filter by resolve status
+    if (filters.resolveStatus === "active") {
+      filtered = filtered.filter((bet) => bet.in_progress);
+    } else if (filters.resolveStatus === "resolved") {
+      filtered = filtered.filter((bet) => !bet.in_progress);
+    }
+
+    // Filter by invested status
+    if (filters.investedStatus === "invested") {
+      filtered = filtered.filter((bet) => bet.user_placement.has_placed);
+    } else if (filters.investedStatus === "not-invested") {
+      filtered = filtered.filter((bet) => !bet.user_placement.has_placed);
+    }
+
+    return filtered;
+  };
+
+  const displayBets = applyFilters(bets);
 
   if (loading) {
     return (
@@ -77,24 +117,12 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
           </p>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            variant={!showAll ? "default" : "outline"}
-            onClick={() => setShowAll(false)}
-            size="sm"
-            className={!showAll ? "bg-primary" : ""}
-          >
-            Active ({activeBets.length})
-          </Button>
-          <Button
-            variant={showAll ? "default" : "outline"}
-            onClick={() => setShowAll(true)}
-            size="sm"
-            className={showAll ? "bg-primary" : ""}
-          >
-            All Bets ({bets.length})
-          </Button>
-        </div>
+        {/* Bet Filters */}
+        <BetFilters
+          partyMembers={partyMembers}
+          onApplyFilters={setFilters}
+          initialFilters={filters}
+        />
       </div>
 
       {error && (
@@ -105,7 +133,7 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
 
       {displayBets.length === 0 ? (
         <Card className="p-8 text-center text-muted-foreground">
-          {showAll ? "No bets available" : "No active bets"}
+          No bets match your current filters
         </Card>
       ) : (
         <div className="space-y-3">
