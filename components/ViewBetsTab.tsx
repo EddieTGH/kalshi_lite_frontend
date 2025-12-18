@@ -47,6 +47,16 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
     investedStatus: "all",
   });
 
+  // Initialize filters with all people selected once party members load
+  useEffect(() => {
+    if (partyMembers.length > 0 && filters.peopleInvolved.length === 0) {
+      setFilters((prev) => ({
+        ...prev,
+        peopleInvolved: partyMembers.map((m) => m.user_id),
+      }));
+    }
+  }, [partyMembers]);
+
   // Fetch bets, lock status, and party members for the current party
   const fetchBets = async () => {
     setLoading(true);
@@ -125,13 +135,17 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
     let filtered = betsToFilter;
 
     // Filter by people involved
-    if (filters.peopleInvolved.length > 0) {
+    // If all people selected (or equal to party member count), don't filter
+    if (filters.peopleInvolved.length > 0 && filters.peopleInvolved.length < partyMembers.length) {
       filtered = filtered.filter((bet) => {
         // Check if any of the selected people are involved in this bet
         return filters.peopleInvolved.some((personId) =>
           bet.people_involved.includes(personId)
         );
       });
+    } else if (filters.peopleInvolved.length === 0) {
+      // No people selected - show only bets with no people involved
+      filtered = filtered.filter((bet) => bet.people_involved.length === 0);
     }
 
     // Filter by resolve status

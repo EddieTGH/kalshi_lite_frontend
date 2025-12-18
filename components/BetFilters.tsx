@@ -40,9 +40,9 @@ export function BetFilters({
   onApplyFilters,
   initialFilters,
 }: BetFiltersProps) {
-  // Initialize with default filters
+  // Initialize with all people selected by default
   const [selectedPeople, setSelectedPeople] = useState<number[]>(
-    initialFilters?.peopleInvolved || []
+    initialFilters?.peopleInvolved || partyMembers.map((m) => m.user_id)
   );
   const [resolveStatus, setResolveStatus] = useState<ResolveStatus>(
     initialFilters?.resolveStatus || "all"
@@ -52,9 +52,20 @@ export function BetFilters({
   );
   const [peoplePopoverOpen, setPeoplePopoverOpen] = useState(false);
 
-  // Check if all people are selected (or none selected = all)
-  const isAllPeopleSelected =
-    selectedPeople.length === 0 || selectedPeople.length === partyMembers.length;
+  // Initialize selectedPeople when partyMembers loads
+  useEffect(() => {
+    // Only auto-initialize if no initial filters were provided
+    if (
+      partyMembers.length > 0 &&
+      selectedPeople.length === 0 &&
+      (!initialFilters || initialFilters.peopleInvolved.length === 0)
+    ) {
+      setSelectedPeople(partyMembers.map((m) => m.user_id));
+    }
+  }, [partyMembers]);
+
+  // Check if all people are selected
+  const isAllPeopleSelected = selectedPeople.length === partyMembers.length;
 
   // Toggle a specific person
   const togglePerson = (userId: number) => {
@@ -69,7 +80,7 @@ export function BetFilters({
 
   // Select all people
   const selectAllPeople = () => {
-    setSelectedPeople([]);
+    setSelectedPeople(partyMembers.map((m) => m.user_id));
   };
 
   // Deselect all people
@@ -88,11 +99,12 @@ export function BetFilters({
 
   // Reset filters
   const handleReset = () => {
-    setSelectedPeople([]);
+    const allPeopleIds = partyMembers.map((m) => m.user_id);
+    setSelectedPeople(allPeopleIds);
     setResolveStatus("all");
     setInvestedStatus("all");
     onApplyFilters({
-      peopleInvolved: [],
+      peopleInvolved: allPeopleIds,
       resolveStatus: "all",
       investedStatus: "all",
     });
@@ -100,7 +112,7 @@ export function BetFilters({
 
   // Get display text for people filter
   const getPeopleDisplayText = () => {
-    if (selectedPeople.length === 0) return "All";
+    if (selectedPeople.length === 0) return "None selected";
     if (selectedPeople.length === partyMembers.length) return "All";
     if (selectedPeople.length === 1) {
       const member = partyMembers.find((m) => m.user_id === selectedPeople[0]);
@@ -140,7 +152,7 @@ export function BetFilters({
                   <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 p-0" align="start">
+              <PopoverContent className="w-64 p-0 bg-white dark:bg-gray-950" align="start">
                 <div className="p-3 border-b space-y-2">
                   <div className="flex gap-2">
                     <Button
@@ -163,9 +175,7 @@ export function BetFilters({
                 </div>
                 <div className="max-h-64 overflow-y-auto p-2">
                   {partyMembers.map((member) => {
-                    const isSelected =
-                      selectedPeople.length === 0 ||
-                      selectedPeople.includes(member.user_id);
+                    const isSelected = selectedPeople.includes(member.user_id);
                     return (
                       <div
                         key={member.user_id}
