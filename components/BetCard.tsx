@@ -12,8 +12,8 @@ import { Trash2 } from "lucide-react";
 interface BetCardProps {
   bet: BetWithPlacement;
   userId: number;
+  partyId: number; // Party ID is now required
   password: string;
-  userMoney: number;
   betsLocked: boolean;
   onBetPlaced: () => void;
   showEndButton?: boolean;
@@ -23,8 +23,8 @@ interface BetCardProps {
 export function BetCard({
   bet,
   userId,
+  partyId,
   password,
-  userMoney,
   betsLocked,
   onBetPlaced,
   showEndButton = false,
@@ -33,16 +33,26 @@ export function BetCard({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
 
+  // Handle remove placed bet with party_id
   const handleRemoveBet = async () => {
-    if (!bet.user_placement.has_placed || !bet.user_placement.placed_bet_id) return;
+    if (!bet.user_placement.has_placed || !bet.user_placement.placed_bet_id)
+      return;
 
-    if (!confirm("Are you sure you want to remove this bet? Your money will be refunded.")) {
+    if (
+      !confirm(
+        "Are you sure you want to remove this bet? Your money will be refunded."
+      )
+    ) {
       return;
     }
 
     setRemoving(true);
     try {
-      await deletePlacedBet(bet.user_placement.placed_bet_id, password);
+      await deletePlacedBet(
+        bet.user_placement.placed_bet_id,
+        partyId,
+        password
+      );
       onBetPlaced();
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to remove bet");
@@ -182,11 +192,11 @@ export function BetCard({
       <PlaceBetDialog
         bet={bet}
         userId={userId}
+        partyId={partyId}
         password={password}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSuccess={onBetPlaced}
-        userMoney={userMoney}
       />
     </>
   );

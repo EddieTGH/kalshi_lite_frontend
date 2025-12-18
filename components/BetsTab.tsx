@@ -11,24 +11,25 @@ import { Card } from "@/components/ui/card";
 
 interface BetsTabProps {
   userId: number;
+  partyId: number; // Party ID is now required
   password: string;
-  userMoney: number;
 }
 
-export function BetsTab({ userId, password, userMoney }: BetsTabProps) {
+export function BetsTab({ userId, partyId, password }: BetsTabProps) {
   const [bets, setBets] = useState<BetWithPlacement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [betsLocked, setBetsLocked] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
+  // Fetch bets and lock status for the current party
   const fetchBets = async () => {
     setLoading(true);
     setError("");
     try {
       const [betsData, lockData] = await Promise.all([
-        getBetsForUser(userId, password),
-        getLockStatus(password),
+        getBetsForUser(userId, partyId, password),
+        getLockStatus(partyId, password),
       ]);
       setBets(betsData);
       setBetsLocked(lockData.bets_locked);
@@ -41,7 +42,7 @@ export function BetsTab({ userId, password, userMoney }: BetsTabProps) {
 
   useEffect(() => {
     fetchBets();
-  }, [userId, password]);
+  }, [userId, partyId, password]); // Re-fetch when party changes
 
   const activeBets = bets.filter((bet) => bet.in_progress);
   const resolvedBets = bets.filter((bet) => !bet.in_progress);
@@ -66,9 +67,6 @@ export function BetsTab({ userId, password, userMoney }: BetsTabProps) {
                 Betting Locked
               </Badge>
             )}
-            <Badge variant="outline" className="text-xs">
-              Available: ${userMoney.toFixed(2)}
-            </Badge>
           </div>
         </div>
 
@@ -116,8 +114,8 @@ export function BetsTab({ userId, password, userMoney }: BetsTabProps) {
               key={bet.bet_id}
               bet={bet}
               userId={userId}
+              partyId={partyId}
               password={password}
-              userMoney={userMoney}
               betsLocked={betsLocked}
               onBetPlaced={fetchBets}
             />

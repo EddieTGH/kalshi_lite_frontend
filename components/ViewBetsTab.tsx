@@ -21,11 +21,11 @@ import {
 
 interface ViewBetsTabProps {
   userId: number;
+  partyId: number; // Party ID is now required
   password: string;
-  userMoney: number;
 }
 
-export function ViewBetsTab({ userId, password, userMoney }: ViewBetsTabProps) {
+export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const [bets, setBets] = useState<BetWithPlacement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -37,13 +37,14 @@ export function ViewBetsTab({ userId, password, userMoney }: ViewBetsTabProps) {
   const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no">("yes");
   const [endingBet, setEndingBet] = useState(false);
 
+  // Fetch bets and lock status for the current party
   const fetchBets = async () => {
     setLoading(true);
     setError("");
     try {
       const [betsData, lockData] = await Promise.all([
-        getBetsForUser(userId, password),
-        getLockStatus(password),
+        getBetsForUser(userId, partyId, password),
+        getLockStatus(partyId, password),
       ]);
       setBets(betsData);
       setBetsLocked(lockData.bets_locked);
@@ -56,12 +57,13 @@ export function ViewBetsTab({ userId, password, userMoney }: ViewBetsTabProps) {
 
   useEffect(() => {
     fetchBets();
-  }, [userId, password]);
+  }, [userId, partyId, password]); // Re-fetch when party changes
 
+  // Handle lock/unlock betting for this party
   const handleLockToggle = async (checked: boolean) => {
     setLockLoading(true);
     try {
-      await updateLockStatus({ bets_locked: checked }, password);
+      await updateLockStatus({ bets_locked: checked }, partyId, password);
       setBetsLocked(checked);
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to update lock status");
@@ -77,12 +79,18 @@ export function ViewBetsTab({ userId, password, userMoney }: ViewBetsTabProps) {
     setEndBetOutcome("yes");
   };
 
+  // Handle end bet with party_id
   const handleEndBetConfirm = async () => {
     if (!selectedBetId) return;
 
     setEndingBet(true);
     try {
-      const result = await endBet(selectedBetId, { outcome: endBetOutcome }, password);
+      const result = await endBet(
+        selectedBetId,
+        { outcome: endBetOutcome },
+        partyId,
+        password
+      );
       setEndBetDialogOpen(false);
       setSelectedBetId(null);
       fetchBets();
@@ -118,9 +126,6 @@ export function ViewBetsTab({ userId, password, userMoney }: ViewBetsTabProps) {
         <div className="space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h2 className="text-2xl font-bold">View Bets (Admin)</h2>
-            <Badge variant="outline" className="text-xs">
-              Available: ${userMoney.toFixed(2)}
-            </Badge>
           </div>
 
           <Card className="p-4 flex items-center justify-between gap-4">
@@ -184,8 +189,8 @@ export function ViewBetsTab({ userId, password, userMoney }: ViewBetsTabProps) {
                 key={bet.bet_id}
                 bet={bet}
                 userId={userId}
+                partyId={partyId}
                 password={password}
-                userMoney={userMoney}
                 betsLocked={betsLocked}
                 onBetPlaced={fetchBets}
                 showEndButton={true}

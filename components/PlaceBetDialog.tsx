@@ -18,21 +18,21 @@ import { placeBet } from "@/app/api/userPlacedBets";
 interface PlaceBetDialogProps {
   bet: BetWithPlacement;
   userId: number;
+  partyId: number; // Party ID is now required
   password: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
-  userMoney: number;
 }
 
 export function PlaceBetDialog({
   bet,
   userId,
+  partyId,
   password,
   open,
   onOpenChange,
   onSuccess,
-  userMoney,
 }: PlaceBetDialogProps) {
   const [amount, setAmount] = useState("");
   const [decision, setDecision] = useState<"yes" | "no">("yes");
@@ -49,6 +49,7 @@ export function PlaceBetDialog({
 
   const { payout, profit } = calculatePayout();
 
+  // Handle place bet with party_id
   const handleSubmit = async () => {
     setError("");
 
@@ -56,11 +57,6 @@ export function PlaceBetDialog({
 
     if (!amountNum || amountNum < 1) {
       setError("Minimum bet amount is $1");
-      return;
-    }
-
-    if (amountNum > userMoney) {
-      setError(`Insufficient funds. Available: $${userMoney.toFixed(2)}`);
       return;
     }
 
@@ -74,6 +70,7 @@ export function PlaceBetDialog({
           amount: amountNum,
           decision,
         },
+        partyId,
         password
       );
       onSuccess();
@@ -143,7 +140,7 @@ export function PlaceBetDialog({
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Available: ${userMoney.toFixed(2)}
+              Minimum bet: $1.00
             </p>
           </div>
 

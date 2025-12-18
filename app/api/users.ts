@@ -4,11 +4,11 @@ import {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
-  GetUsersResponse,
   User,
 } from "@/lib/types";
 import { BASE_URL, createAuthHeaders } from "./base";
 
+// Login user with password
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await axios.post<LoginResponse>(
     `${BASE_URL}/users/login`,
@@ -17,6 +17,7 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   return response.data;
 };
 
+// Register a new user
 export const register = async (
   data: RegisterRequest
 ): Promise<RegisterResponse> => {
@@ -27,13 +28,8 @@ export const register = async (
   return response.data;
 };
 
-export const getAllUsers = async (password: string): Promise<User[]> => {
-  const response = await axios.get<GetUsersResponse>(`${BASE_URL}/users`, {
-    headers: createAuthHeaders(password),
-  });
-  return response.data.users;
-};
-
+// Get user by ID (returns global user data only, not party-specific)
+// For party-specific data (money, admin status), use getPartyMembers from parties.ts
 export const getUserById = async (
   id: number,
   password: string

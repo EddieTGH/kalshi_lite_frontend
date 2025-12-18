@@ -1,17 +1,45 @@
-// User types
+// User types (v2.0 - admin and money are now party-specific)
 export interface User {
   user_id: number;
   name: string;
   password?: string; // Only included on registration
-  admin: boolean;
-  money: number; // Available balance
-  total_money?: number; // Available + invested (for leaderboard)
+  membership_tier: "basic" | "vip";
+  remaining_hosts: number; // How many parties user can create
   created_at?: Date;
 }
 
-// Bet types
+// Party types (v2.0)
+export interface Party {
+  party_id: number;
+  name: string;
+  description?: string;
+  date: string | Date; // Party date
+  join_code: string; // 3 uppercase letters (A-Z)
+  locked_status: boolean; // Party-specific lock status
+  starting_balance: number; // Default balance for new members
+  created_at?: string | Date;
+}
+
+// Party with membership info (returned from GET /parties)
+export interface PartyWithMembership extends Party {
+  is_admin: boolean; // Whether current user is admin of this party
+  member_count: number; // Total members in party
+}
+
+// Party Member types (v2.0)
+export interface PartyMember {
+  user_id: number;
+  name: string;
+  admin: boolean; // Party-specific admin status
+  money: number; // Party-specific available balance
+  total_money: number; // money + money invested in active bets for this party
+  joined_at?: string | Date;
+}
+
+// Bet types (v2.0 - now includes party_id)
 export interface Bet {
   bet_id: number;
+  party_id: number; // Party this bet belongs to
   name: string;
   description: string;
   odds_for_yes: number; // 0-100
@@ -20,7 +48,7 @@ export interface Bet {
   in_progress: boolean;
   outcome: "yes" | "no" | null;
   created_at?: Date;
-  updated_at?: Date;
+  ended_at?: Date;
 }
 
 // User Placed Bet types
@@ -75,7 +103,37 @@ export interface LoginRequest {
 
 export interface RegisterRequest {
   name: string;
+  // Note: admin removed in v2.0 - admin is now party-specific
+}
+
+// Party request types (v2.0)
+export interface CreatePartyRequest {
+  name: string;
+  description?: string;
+  date: string; // ISO date format (YYYY-MM-DD)
+  starting_balance?: number; // Default 100
+}
+
+export interface UpdatePartyRequest {
+  name?: string;
+  description?: string;
+  date?: string;
+  starting_balance?: number;
+}
+
+export interface JoinPartyRequest {
+  join_code: string; // Exactly 3 uppercase letters
+}
+
+export interface AddMemberRequest {
+  user_id: number;
   admin?: boolean;
+  money?: number;
+}
+
+export interface UpdateMemberRequest {
+  admin?: boolean;
+  money?: number;
 }
 
 export interface CreateBetRequest {
@@ -114,8 +172,30 @@ export interface RegisterResponse extends User {
   password: string;
 }
 
-export interface GetUsersResponse {
-  users: User[];
+// Party response types (v2.0)
+export interface GetPartiesResponse {
+  parties: PartyWithMembership[];
+}
+
+export interface JoinPartyResponse extends Party {
+  user_money: number;
+  message: string;
+}
+
+export interface GetPartyMembersResponse {
+  members: PartyMember[];
+}
+
+export interface DeletePartyResponse {
+  message: string;
+  party_id: number;
+  host_refunded: boolean;
+}
+
+export interface DeleteMemberResponse {
+  message: string;
+  user_id: number;
+  party_id: number;
 }
 
 export interface GetBetsForUserResponse {

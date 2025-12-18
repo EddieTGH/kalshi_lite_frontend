@@ -25,7 +25,8 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (!isLoading && user) {
-      router.push("/dashboard");
+      // Redirect to party-selection page instead of dashboard
+      router.push("/party-selection");
     }
   }, [user, isLoading, router]);
 
@@ -46,7 +47,7 @@ export default function LoginPage() {
     try {
       const userData = await loginApi({ password });
       login(userData, password);
-      router.push("/dashboard");
+      router.push("/party-selection");
     } catch (err: any) {
       if (err.response?.status === 401) {
         setError("Invalid password");
