@@ -49,6 +49,7 @@ export interface Bet {
   outcome: "yes" | "no" | null;
   created_at?: Date;
   ended_at?: Date;
+  payouts?: Payout[]; // Detailed payout information when bet is resolved
 }
 
 // User Placed Bet types

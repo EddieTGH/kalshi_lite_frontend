@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { BetWithPlacement } from "@/lib/types";
 import { PlaceBetDialog } from "./PlaceBetDialog";
 import { deletePlacedBet } from "@/app/api/userPlacedBets";
-import { Trash2 } from "lucide-react";
+import { Trash2, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface BetCardProps {
   bet: BetWithPlacement;
@@ -36,6 +37,7 @@ export function BetCard({
 }: BetCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Handle remove placed bet with party_id
   const handleRemoveBet = async () => {
@@ -157,19 +159,100 @@ export function BetCard({
           </div>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="bg-muted rounded-lg p-3">
+            <div className={`rounded-lg p-3 ${
+              !bet.in_progress && bet.outcome === "yes"
+                ? "bg-primary/20 border-2 border-primary"
+                : "bg-muted"
+            }`}>
               <div className="text-xs text-muted-foreground mb-1">YES</div>
-              <div className="text-lg sm:text-xl font-bold text-primary">
+              <div className={`text-lg sm:text-xl font-bold ${
+                !bet.in_progress && bet.outcome === "yes"
+                  ? "text-primary"
+                  : "text-primary"
+              }`}>
                 {bet.odds_for_yes}%
               </div>
+              {!bet.in_progress && bet.outcome === "yes" && (
+                <Badge variant="default" className="mt-1 text-xs">Winner</Badge>
+              )}
             </div>
-            <div className="bg-muted rounded-lg p-3">
+            <div className={`rounded-lg p-3 ${
+              !bet.in_progress && bet.outcome === "no"
+                ? "bg-secondary/20 border-2 border-secondary"
+                : "bg-muted"
+            }`}>
               <div className="text-xs text-muted-foreground mb-1">NO</div>
-              <div className="text-lg sm:text-xl font-bold text-secondary">
+              <div className={`text-lg sm:text-xl font-bold ${
+                !bet.in_progress && bet.outcome === "no"
+                  ? "text-secondary"
+                  : "text-secondary"
+              }`}>
                 {bet.odds_for_no}%
               </div>
+              {!bet.in_progress && bet.outcome === "no" && (
+                <Badge variant="secondary" className="mt-1 text-xs">Winner</Badge>
+              )}
             </div>
           </div>
+
+          {/* Participant Details Dropdown for Resolved Bets */}
+          {!bet.in_progress && bet.payouts && bet.payouts.length > 0 && (
+            <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen} className="mt-3">
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full flex items-center justify-between"
+                >
+                  <span className="text-sm font-medium">
+                    Bet Details ({bet.payouts.length} participant{bet.payouts.length !== 1 ? 's' : ''})
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${
+                      detailsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2">
+                <div className="border rounded-lg divide-y">
+                  {bet.payouts.map((payout) => (
+                    <div key={payout.user_id} className="p-3 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-sm">{payout.user_name}</span>
+                        <Badge
+                          variant={payout.decision === "yes" ? "default" : "secondary"}
+                          className="text-xs"
+                        >
+                          {payout.decision.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Bet:</span>
+                          <div className="font-medium">${payout.amount_bet.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Payout:</span>
+                          <div className="font-medium">${payout.payout.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Profit:</span>
+                          <div
+                            className={`font-bold ${
+                              payout.profit >= 0 ? "text-green-600" : "text-red-600"
+                            }`}
+                          >
+                            {payout.profit >= 0 ? "+" : ""}${payout.profit.toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
 
           {renderPlacementInfo()}
 

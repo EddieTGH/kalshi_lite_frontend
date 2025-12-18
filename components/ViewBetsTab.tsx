@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BetWithPlacement, PartyMember } from "@/lib/types";
+import { BetWithPlacement, PartyMember, EndBetResponse } from "@/lib/types";
 import { getBetsForUser, endBet } from "@/app/api/bets";
 import { getLockStatus, updateLockStatus } from "@/app/api/settings";
 import { getPartyMembers } from "@/app/api/parties";
 import { BetCard } from "./BetCard";
 import { BetFilters, BetFilterState } from "./BetFilters";
+import { BetEndedDialog } from "./BetEndedDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -40,6 +41,8 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no">("yes");
   const [endingBet, setEndingBet] = useState(false);
   const [availableMoney, setAvailableMoney] = useState<number>(0);
+  const [betEndedDialogOpen, setBetEndedDialogOpen] = useState(false);
+  const [betEndedResult, setBetEndedResult] = useState<EndBetResponse | null>(null);
 
   // Filter state
   const [filters, setFilters] = useState<BetFilterState>({
@@ -124,12 +127,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
       setSelectedBetId(null);
       fetchBets();
 
-      // Show success message with payouts
-      const totalWinners = result.payouts.filter((p) => p.profit > 0).length;
-      const totalLosers = result.payouts.filter((p) => p.profit <= 0).length;
-      alert(
-        `Bet ended successfully!\nOutcome: ${result.outcome?.toUpperCase()}\nWinners: ${totalWinners}\nLosers: ${totalLosers}`
-      );
+      // Show detailed results dialog
+      setBetEndedResult(result);
+      setBetEndedDialogOpen(true);
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to end bet");
     } finally {
@@ -307,6 +307,12 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <BetEndedDialog
+        open={betEndedDialogOpen}
+        onOpenChange={setBetEndedDialogOpen}
+        betResult={betEndedResult}
+      />
     </>
   );
 }
