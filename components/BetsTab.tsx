@@ -23,6 +23,7 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [betsLocked, setBetsLocked] = useState(false);
+  const [availableMoney, setAvailableMoney] = useState<number>(0);
 
   // Filter state
   const [filters, setFilters] = useState<BetFilterState>({
@@ -54,6 +55,12 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
       setBets(betsData);
       setBetsLocked(lockData.bets_locked);
       setPartyMembers(membersData);
+
+      // Set current user's available money
+      const currentUser = membersData.find((m) => m.user_id === userId);
+      if (currentUser) {
+        setAvailableMoney(currentUser.money);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to load bets");
     } finally {
@@ -116,6 +123,9 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-2xl font-bold">Bets</h2>
           <div className="flex items-center gap-2 flex-wrap">
+            <Badge variant="outline" className="text-sm font-semibold">
+              Available: ${availableMoney.toFixed(2)}
+            </Badge>
             {betsLocked && (
               <Badge variant="destructive" className="text-xs">
                 Betting Locked
@@ -160,6 +170,8 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
               password={password}
               betsLocked={betsLocked}
               onBetPlaced={fetchBets}
+              availableMoney={availableMoney}
+              onMoneyChange={setAvailableMoney}
             />
           ))}
         </div>

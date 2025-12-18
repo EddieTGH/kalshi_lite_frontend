@@ -39,6 +39,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const [selectedBetId, setSelectedBetId] = useState<number | null>(null);
   const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no">("yes");
   const [endingBet, setEndingBet] = useState(false);
+  const [availableMoney, setAvailableMoney] = useState<number>(0);
 
   // Filter state
   const [filters, setFilters] = useState<BetFilterState>({
@@ -70,6 +71,12 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
       setBets(betsData);
       setBetsLocked(lockData.bets_locked);
       setPartyMembers(membersData);
+
+      // Set current user's available money
+      const currentUser = membersData.find((m) => m.user_id === userId);
+      if (currentUser) {
+        setAvailableMoney(currentUser.money);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to load bets");
     } finally {
@@ -181,6 +188,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
         <div className="space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h2 className="text-2xl font-bold">View Bets (Admin)</h2>
+            <Badge variant="outline" className="text-sm font-semibold">
+              Available: ${availableMoney.toFixed(2)}
+            </Badge>
           </div>
 
           <Card className="p-4 flex items-center justify-between gap-4">
@@ -238,6 +248,8 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
                 onBetPlaced={fetchBets}
                 showEndButton={true}
                 onEndBet={handleEndBetClick}
+                availableMoney={availableMoney}
+                onMoneyChange={setAvailableMoney}
               />
             ))}
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ export function LeaderboardTab({ partyId, password }: LeaderboardTabProps) {
   const [error, setError] = useState("");
 
   // Fetch party members (leaderboard)
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -30,11 +30,20 @@ export function LeaderboardTab({ partyId, password }: LeaderboardTabProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [partyId, password]);
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [partyId]); // Re-fetch when party changes
+  }, [fetchLeaderboard]); // Re-fetch when party changes
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchLeaderboard();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [fetchLeaderboard]); // Re-create interval when fetchLeaderboard changes
 
   return (
     <div className="space-y-4">
@@ -83,14 +92,17 @@ export function LeaderboardTab({ partyId, password }: LeaderboardTabProps) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold truncate">{member.name}</p>
                     {member.admin && (
-                      <Badge variant="secondary" className="text-xs bg-secondary text-secondary-foreground flex-shrink-0">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-secondary text-secondary-foreground flex-shrink-0"
+                      >
                         Admin
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  {/* <p className="text-sm text-muted-foreground">
                     Available: ${member.money.toFixed(2)}
-                  </p>
+                  </p> */}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">

@@ -23,6 +23,8 @@ interface PlaceBetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  availableMoney: number;
+  onMoneyChange: (newMoney: number) => void;
 }
 
 export function PlaceBetDialog({
@@ -33,6 +35,8 @@ export function PlaceBetDialog({
   open,
   onOpenChange,
   onSuccess,
+  availableMoney,
+  onMoneyChange,
 }: PlaceBetDialogProps) {
   const [amount, setAmount] = useState("");
   const [decision, setDecision] = useState<"yes" | "no">("yes");
@@ -63,7 +67,7 @@ export function PlaceBetDialog({
     setLoading(true);
 
     try {
-      await placeBet(
+      const response = await placeBet(
         {
           user_id: userId,
           bet_id: bet.bet_id,
@@ -73,6 +77,8 @@ export function PlaceBetDialog({
         partyId,
         password
       );
+      // Update available money immediately
+      onMoneyChange(response.user_money_remaining);
       onSuccess();
       onOpenChange(false);
       setAmount("");
@@ -139,8 +145,8 @@ export function PlaceBetDialog({
                 step="0.01"
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Minimum bet: $1.00
+            <p className="text-xs text-muted-foreground font-semibold">
+              Available: ${availableMoney.toFixed(2)}
             </p>
           </div>
 

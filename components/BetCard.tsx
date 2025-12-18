@@ -18,6 +18,8 @@ interface BetCardProps {
   onBetPlaced: () => void;
   showEndButton?: boolean;
   onEndBet?: (betId: number) => void;
+  availableMoney: number;
+  onMoneyChange: (newMoney: number) => void;
 }
 
 export function BetCard({
@@ -29,6 +31,8 @@ export function BetCard({
   onBetPlaced,
   showEndButton = false,
   onEndBet,
+  availableMoney,
+  onMoneyChange,
 }: BetCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
@@ -48,11 +52,13 @@ export function BetCard({
 
     setRemoving(true);
     try {
-      await deletePlacedBet(
+      const response = await deletePlacedBet(
         bet.user_placement.placed_bet_id,
         partyId,
         password
       );
+      // Update available money immediately
+      onMoneyChange(response.user_money_remaining);
       onBetPlaced();
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to remove bet");
@@ -197,6 +203,8 @@ export function BetCard({
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSuccess={onBetPlaced}
+        availableMoney={availableMoney}
+        onMoneyChange={onMoneyChange}
       />
     </>
   );
