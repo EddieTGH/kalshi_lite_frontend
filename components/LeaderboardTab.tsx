@@ -1,38 +1,49 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User } from "@/lib/types";
-import { getAllUsers } from "@/app/api/users";
+import { PartyMember } from "@/lib/types";
+import { getPartyMembers } from "@/app/api/parties";
 import { RefreshCw } from "lucide-react";
 
 interface LeaderboardTabProps {
+  partyId: number; // Party ID is now required
   password: string;
 }
 
-export function LeaderboardTab({ password }: LeaderboardTabProps) {
-  const [users, setUsers] = useState<User[]>([]);
+export function LeaderboardTab({ partyId, password }: LeaderboardTabProps) {
+  const [members, setMembers] = useState<PartyMember[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchLeaderboard = async () => {
+  // Fetch party members (leaderboard)
+  const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await getAllUsers(password);
-      setUsers(data);
+      const data = await getPartyMembers(partyId, password);
+      setMembers(data);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to load leaderboard");
     } finally {
       setLoading(false);
     }
-  };
+  }, [partyId, password]);
 
   useEffect(() => {
     fetchLeaderboard();
-  }, []);
+  }, [fetchLeaderboard]); // Re-fetch when party changes
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchLeaderboard();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [fetchLeaderboard]); // Re-create interval when fetchLeaderboard changes
 
   return (
     <div className="space-y-4">
@@ -56,15 +67,15 @@ export function LeaderboardTab({ password }: LeaderboardTabProps) {
         </div>
       )}
 
-      {users.length === 0 && !loading && !error && (
+      {members.length === 0 && !loading && !error && (
         <Card className="p-8 text-center text-muted-foreground">
-          No users found
+          No members found in this party
         </Card>
       )}
 
       <div className="space-y-3">
-        {users.map((user, index) => (
-          <Card key={user.user_id} className="p-4">
+        {members.map((member, index) => (
+          <Card key={member.user_id} className="p-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="flex-shrink-0">
@@ -79,21 +90,24 @@ export function LeaderboardTab({ password }: LeaderboardTabProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold truncate">{user.name}</p>
-                    {user.admin && (
-                      <Badge variant="secondary" className="text-xs bg-secondary text-secondary-foreground flex-shrink-0">
+                    <p className="font-semibold truncate">{member.name}</p>
+                    {member.admin && (
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-secondary text-secondary-foreground flex-shrink-0"
+                      >
                         Admin
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Available: ${user.money.toFixed(2)}
-                  </p>
+                  {/* <p className="text-sm text-muted-foreground">
+                    Available: ${member.money.toFixed(2)}
+                  </p> */}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-xl font-bold text-primary">
-                  ${(user.total_money ?? user.money).toFixed(2)}
+                  ${member.total_money.toFixed(2)}
                 </p>
                 <p className="text-xs text-muted-foreground">Total</p>
               </div>

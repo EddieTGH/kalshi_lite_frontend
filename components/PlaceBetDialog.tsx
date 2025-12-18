@@ -18,21 +18,25 @@ import { placeBet } from "@/app/api/userPlacedBets";
 interface PlaceBetDialogProps {
   bet: BetWithPlacement;
   userId: number;
+  partyId: number; // Party ID is now required
   password: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
-  userMoney: number;
+  onSuccess: () => Promise<void>; // Make this async to wait for refresh
+  availableMoney: number;
+  onMoneyChange: (newMoney: number) => void;
 }
 
 export function PlaceBetDialog({
   bet,
   userId,
+  partyId,
   password,
   open,
   onOpenChange,
   onSuccess,
-  userMoney,
+  availableMoney,
+  onMoneyChange,
 }: PlaceBetDialogProps) {
   const [amount, setAmount] = useState("");
   const [decision, setDecision] = useState<"yes" | "no">("yes");
@@ -49,6 +53,7 @@ export function PlaceBetDialog({
 
   const { payout, profit } = calculatePayout();
 
+  // Handle place bet with party_id
   const handleSubmit = async () => {
     setError("");
 
@@ -59,24 +64,25 @@ export function PlaceBetDialog({
       return;
     }
 
-    if (amountNum > userMoney) {
-      setError(`Insufficient funds. Available: $${userMoney.toFixed(2)}`);
-      return;
-    }
-
     setLoading(true);
 
     try {
-      await placeBet(
+      const response = await placeBet(
         {
           user_id: userId,
           bet_id: bet.bet_id,
           amount: amountNum,
           decision,
         },
+        partyId,
         password
       );
-      onSuccess();
+      // Update available money immediately
+      onMoneyChange(response.user_money_remaining);
+
+      // Wait for refresh to complete before closing modal
+      await onSuccess();
+
       onOpenChange(false);
       setAmount("");
     } catch (err: any) {
@@ -87,7 +93,12 @@ export function PlaceBetDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(open) => {
+      // Prevent closing while loading
+      if (!loading) {
+        onOpenChange(open);
+      }
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{bet.name}</DialogTitle>
@@ -142,8 +153,8 @@ export function PlaceBetDialog({
                 step="0.01"
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Available: ${userMoney.toFixed(2)}
+            <p className="text-xs text-muted-foreground font-semibold">
+              Available: ${availableMoney.toFixed(2)}
             </p>
           </div>
 
@@ -172,6 +183,7 @@ export function PlaceBetDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
+            disabled={loading}
             className="flex-1 sm:flex-initial"
           >
             Cancel

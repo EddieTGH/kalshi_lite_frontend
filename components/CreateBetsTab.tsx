@@ -7,37 +7,43 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User } from "@/lib/types";
+import { PartyMember } from "@/lib/types";
 import { createBet } from "@/app/api/bets";
-import { getAllUsers } from "@/app/api/users";
+import { getPartyMembers } from "@/app/api/parties";
 import { X } from "lucide-react";
 
 interface CreateBetsTabProps {
+  partyId: number; // Party ID is now required
   password: string;
   onBetCreated?: () => void;
 }
 
-export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
+export function CreateBetsTab({
+  partyId,
+  password,
+  onBetCreated,
+}: CreateBetsTabProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [oddsForYes, setOddsForYes] = useState("50");
   const [peopleInvolved, setPeopleInvolved] = useState<number[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [members, setMembers] = useState<PartyMember[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Fetch party members for "people involved" selection
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchMembers = async () => {
       try {
-        const data = await getAllUsers(password);
-        setUsers(data);
+        const data = await getPartyMembers(partyId, password);
+        setMembers(data);
       } catch (err) {
-        console.error("Failed to fetch users", err);
+        console.error("Failed to fetch party members", err);
       }
     };
-    fetchUsers();
-  }, [password]);
+    fetchMembers();
+  }, [partyId, password]); // Re-fetch when party changes
 
   const toggleUser = (userId: number) => {
     if (peopleInvolved.includes(userId)) {
@@ -47,6 +53,7 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
     }
   };
 
+  // Handle form submission - create bet in current party
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -74,6 +81,7 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
           odds_for_yes: odds,
           people_involved: peopleInvolved,
         },
+        partyId,
         password
       );
       setSuccess("Bet created successfully!");
@@ -162,23 +170,23 @@ export function CreateBetsTab({ password, onBetCreated }: CreateBetsTabProps) {
           <div className="space-y-2">
             <Label>People Involved (Optional)</Label>
             <p className="text-xs text-muted-foreground mb-2">
-              Select users who are involved in the outcome. They won&apos;t be
-              able to bet on this.
+              Select party members who are involved in the outcome. They
+              won&apos;t be able to bet on this.
             </p>
             <div className="flex flex-wrap gap-2">
-              {users.map((user) => (
+              {members.map((member) => (
                 <button
-                  key={user.user_id}
+                  key={member.user_id}
                   type="button"
-                  onClick={() => toggleUser(user.user_id)}
+                  onClick={() => toggleUser(member.user_id)}
                   className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                    peopleInvolved.includes(user.user_id)
+                    peopleInvolved.includes(member.user_id)
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted hover:bg-muted/80"
                   }`}
                 >
-                  {user.name}
-                  {peopleInvolved.includes(user.user_id) && (
+                  {member.name}
+                  {peopleInvolved.includes(member.user_id) && (
                     <X className="inline-block ml-1 h-3 w-3" />
                   )}
                 </button>
