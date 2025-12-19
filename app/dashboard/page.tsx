@@ -11,7 +11,7 @@ import { ViewBetsTab } from "@/components/ViewBetsTab";
 import { YourBetsTab } from "@/components/YourBetsTab";
 import { CreateBetsTab } from "@/components/CreateBetsTab";
 import { PartyHeader } from "@/components/PartyHeader";
-import { LogOut, ArrowLeft } from "lucide-react";
+import { LogOut, ArrowLeft, User, Search, Trophy } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, password, currentParty, logout, isLoading } = useAuth();
@@ -184,24 +184,27 @@ export default function DashboardPage() {
           </TabsContent>
 
           {/* Bottom Navigation Bar */}
-          <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-3 h-16 rounded-none border-t bg-white shadow-lg">
+          <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-3 h-20 rounded-t-3xl border-t bg-white shadow-2xl px-2 gap-0 [&>*]:border-0">
             <TabsTrigger
               value="your-bets"
-              className="text-xs py-2 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 data-[state=active]:font-semibold"
+              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-blue-100 data-[state=active]:text-blue-700 data-[state=inactive]:text-gray-500"
             >
-              Your Bets
+              <User className="h-5 w-5" />
+              <span className="text-xs font-medium">Your Bets</span>
             </TabsTrigger>
             <TabsTrigger
               value="browse-bets"
-              className="text-xs py-2 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 data-[state=active]:font-semibold"
+              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-blue-100 data-[state=active]:text-blue-700 data-[state=inactive]:text-gray-500"
             >
-              Browse Bets
+              <Search className="h-5 w-5" />
+              <span className="text-xs font-medium">Browse</span>
             </TabsTrigger>
             <TabsTrigger
               value="leaderboard"
-              className="text-xs py-2 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 data-[state=active]:font-semibold"
+              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-blue-100 data-[state=active]:text-blue-700 data-[state=inactive]:text-gray-500"
             >
-              Leaderboard
+              <Trophy className="h-5 w-5" />
+              <span className="text-xs font-medium">Leaderboard</span>
             </TabsTrigger>
           </TabsList>
         </Tabs>
