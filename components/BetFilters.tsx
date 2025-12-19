@@ -18,15 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export type ResolveStatus = "all" | "active" | "resolved";
-export type InvestedStatus = "all" | "invested" | "not-invested";
+export type ApprovalStatus = "all" | "pending" | "approved";
 
 export interface BetFilterState {
   peopleInvolved: number[]; // Array of user IDs, empty array means "All"
   resolveStatus: ResolveStatus;
-  investedStatus: InvestedStatus;
+  approvalStatus: ApprovalStatus;
 }
 
 interface BetFiltersProps {
@@ -47,8 +47,8 @@ export function BetFilters({
   const [resolveStatus, setResolveStatus] = useState<ResolveStatus>(
     initialFilters?.resolveStatus || "all"
   );
-  const [investedStatus, setInvestedStatus] = useState<InvestedStatus>(
-    initialFilters?.investedStatus || "all"
+  const [approvalStatus, setApprovalStatus] = useState<ApprovalStatus>(
+    initialFilters?.approvalStatus || "approved"
   );
   const [peoplePopoverOpen, setPeoplePopoverOpen] = useState(false);
 
@@ -93,7 +93,7 @@ export function BetFilters({
     onApplyFilters({
       peopleInvolved: selectedPeople,
       resolveStatus,
-      investedStatus,
+      approvalStatus,
     });
   };
 
@@ -102,11 +102,11 @@ export function BetFilters({
     const allPeopleIds = partyMembers.map((m) => m.user_id);
     setSelectedPeople(allPeopleIds);
     setResolveStatus("all");
-    setInvestedStatus("all");
+    setApprovalStatus("approved");
     onApplyFilters({
       peopleInvolved: allPeopleIds,
       resolveStatus: "all",
-      investedStatus: "all",
+      approvalStatus: "approved",
     });
   };
 
@@ -218,19 +218,19 @@ export function BetFilters({
             </Select>
           </div>
 
-          {/* Invested Status Filter */}
+          {/* Approval Status Filter */}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">
-              Invested Status
+              Approval Status
             </Label>
-            <Select value={investedStatus} onValueChange={(value: InvestedStatus) => setInvestedStatus(value)}>
+            <Select value={approvalStatus} onValueChange={(value: ApprovalStatus) => setApprovalStatus(value)}>
               <SelectTrigger className="w-full h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Bets</SelectItem>
-                <SelectItem value="invested">Invested In</SelectItem>
-                <SelectItem value="not-invested">Not Invested In</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
               </SelectContent>
             </Select>
           </div>

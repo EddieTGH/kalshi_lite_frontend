@@ -8,6 +8,7 @@ import {
   GetBetsForUserResponse,
   BetWithPlacement,
   DeleteBetResponse,
+  ApproveBetRequest,
 } from "@/lib/types";
 import { BASE_URL, createAuthHeaders } from "./base";
 
@@ -89,6 +90,41 @@ export const endBet = async (
   const response = await axios.put<EndBetResponse>(
     `${BASE_URL}/bets/${id}/end?party_id=${partyId}`,
     data,
+    {
+      headers: createAuthHeaders(password),
+    }
+  );
+  return response.data;
+};
+
+// Approve a pending bet (party admin only)
+// Requires party_id query parameter
+// Can optionally edit bet details during approval
+export const approveBet = async (
+  id: number,
+  data: ApproveBetRequest | undefined,
+  partyId: number,
+  password: string
+): Promise<Bet> => {
+  const response = await axios.put<Bet>(
+    `${BASE_URL}/bets/${id}/approve?party_id=${partyId}`,
+    data || {},
+    {
+      headers: createAuthHeaders(password),
+    }
+  );
+  return response.data;
+};
+
+// Deny/delete a pending bet (party admin only)
+// Requires party_id query parameter
+export const denyBet = async (
+  id: number,
+  partyId: number,
+  password: string
+): Promise<DeleteBetResponse> => {
+  const response = await axios.delete<DeleteBetResponse>(
+    `${BASE_URL}/bets/${id}/deny?party_id=${partyId}`,
     {
       headers: createAuthHeaders(password),
     }

@@ -48,7 +48,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const [filters, setFilters] = useState<BetFilterState>({
     peopleInvolved: [],
     resolveStatus: "all",
-    investedStatus: "all",
+    approvalStatus: "approved",
   });
 
   // Initialize filters with all people selected once party members load
@@ -162,6 +162,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const applyFilters = (betsToFilter: BetWithPlacement[]) => {
     let filtered = betsToFilter;
 
+    // Filter out bets user has already invested in (shown in "Your Bets")
+    filtered = filtered.filter((bet) => !bet.user_placement.has_placed);
+
     // Filter by people involved
     // If all people selected (or equal to party member count), don't filter
     if (filters.peopleInvolved.length > 0 && filters.peopleInvolved.length < partyMembers.length) {
@@ -183,11 +186,11 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
       filtered = filtered.filter((bet) => !bet.in_progress);
     }
 
-    // Filter by invested status
-    if (filters.investedStatus === "invested") {
-      filtered = filtered.filter((bet) => bet.user_placement.has_placed);
-    } else if (filters.investedStatus === "not-invested") {
-      filtered = filtered.filter((bet) => !bet.user_placement.has_placed);
+    // Filter by approval status
+    if (filters.approvalStatus === "approved") {
+      filtered = filtered.filter((bet) => bet.status === "approved");
+    } else if (filters.approvalStatus === "pending") {
+      filtered = filtered.filter((bet) => bet.status === "pending");
     }
 
     return filtered;
@@ -271,6 +274,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
                 onEndBet={handleEndBetClick}
                 availableMoney={availableMoney}
                 onMoneyChange={setAvailableMoney}
+                isAdmin={true}
+                partyMembers={partyMembers}
+                onBetUpdated={refreshBets}
               />
             ))}
           </div>
