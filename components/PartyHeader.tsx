@@ -17,11 +17,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Calendar, Users, Copy, Edit, Check } from "lucide-react";
+import { Calendar, Users, Copy, Edit, Check, ChevronDown } from "lucide-react";
 import { EditPartyModal } from "@/components/EditPartyModal";
 
 interface PartyHeaderProps {
@@ -35,6 +34,7 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
 
   // Fetch user's parties on mount
   useEffect(() => {
@@ -154,19 +154,14 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
         </Button>
       </div>
 
-      {/* Party Details Card */}
+      {/* Party Details Card - Compact with Expandable Details */}
       <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <CardTitle className="text-xl">{currentParty.name}</CardTitle>
-                {currentParty.is_admin && (
-                  <Badge variant="default">Admin</Badge>
-                )}
-              </div>
-              {currentParty.description && (
-                <CardDescription>{currentParty.description}</CardDescription>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-lg">{currentParty.name}</CardTitle>
+              {currentParty.is_admin && (
+                <Badge variant="default" className="text-xs">Admin</Badge>
               )}
             </div>
 
@@ -175,56 +170,94 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
               <Button
                 variant="outline"
                 size="icon"
+                className="h-8 w-8"
                 onClick={() => setShowEditModal(true)}
                 title="Edit party settings"
               >
-                <Edit className="h-4 w-4" />
+                <Edit className="h-3 w-3" />
               </Button>
             )}
           </div>
         </CardHeader>
 
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Party Date */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>{new Date(currentParty.date).toLocaleDateString()}</span>
-            </div>
-
-            {/* Member Count */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span>{currentParty.member_count} members</span>
-            </div>
-
-            {/* Join Code with Copy Button */}
+        <CardContent className="pt-0 pb-3">
+          {/* Join Code and Show Details - Same Line */}
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="font-mono text-base">
+              <span className="text-sm text-muted-foreground">Join Code:</span>
+              <Badge variant="outline" className="font-mono text-sm">
                 {currentParty.join_code}
               </Badge>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7"
+                className="h-6 w-6"
                 onClick={handleCopyJoinCode}
                 title="Copy join code"
               >
                 {copied ? (
-                  <Check className="h-4 w-4 text-green-600" />
+                  <Check className="h-3 w-3 text-green-600" />
                 ) : (
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-3 w-3" />
                 )}
               </Button>
             </div>
+
+            {/* Expandable Details Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDetailsExpanded(!detailsExpanded)}
+              className="gap-1 h-7 text-xs px-2"
+            >
+              <span>Show Details</span>
+              <ChevronDown
+                className={`h-3 w-3 transition-transform ${
+                  detailsExpanded ? "rotate-180" : ""
+                }`}
+              />
+            </Button>
           </div>
 
-          {/* Starting Balance Info */}
-          <div className="mt-4 pt-4 border-t">
-            <p className="text-xs text-muted-foreground">
-              Starting balance: ${currentParty.starting_balance}
-            </p>
-          </div>
+          {/* Expandable Details */}
+          {detailsExpanded && (
+            <div className="mt-3 pt-3 border-t space-y-3">
+              {/* Description */}
+              {currentParty.description && (
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">Description</p>
+                  <p className="text-sm">{currentParty.description}</p>
+                </div>
+              )}
+
+              {/* Party Info Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Member Count */}
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">Members</p>
+                  <div className="flex items-center gap-1 text-sm">
+                    <Users className="h-3 w-3" />
+                    <span>{currentParty.member_count}</span>
+                  </div>
+                </div>
+
+                {/* Party Date */}
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">Date</p>
+                  <div className="flex items-center gap-1 text-sm">
+                    <Calendar className="h-3 w-3" />
+                    <span>{new Date(currentParty.date).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                {/* Starting Balance */}
+                <div className="col-span-2">
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">Starting Balance</p>
+                  <p className="text-sm">${currentParty.starting_balance}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

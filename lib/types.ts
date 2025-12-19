@@ -47,6 +47,10 @@ export interface Bet {
   people_involved: number[]; // Array of user_ids
   in_progress: boolean;
   outcome: "yes" | "no" | null;
+  status: "pending" | "approved"; // Bet approval status
+  created_by?: number; // User ID who created the bet
+  approved_by?: number; // User ID who approved the bet (for admins)
+  approved_at?: Date; // When the bet was approved
   created_at?: Date;
   ended_at?: Date;
   payouts?: Payout[]; // Detailed payout information when bet is resolved
@@ -162,12 +166,19 @@ export interface EndBetRequest {
   outcome: "yes" | "no";
 }
 
+export interface ApproveBetRequest {
+  name?: string;
+  description?: string;
+  odds_for_yes?: number;
+  people_involved?: number[];
+}
+
 export interface LockBetsRequest {
   bets_locked: boolean;
 }
 
 // API Response types
-export interface LoginResponse extends User {}
+export type LoginResponse = User;
 
 export interface RegisterResponse extends User {
   password: string;

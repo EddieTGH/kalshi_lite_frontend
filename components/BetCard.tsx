@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BetWithPlacement } from "@/lib/types";
+import { BetWithPlacement, PartyMember } from "@/lib/types";
 import { PlaceBetDialog } from "./PlaceBetDialog";
+import { EditApproveBetModal } from "./EditApproveBetModal";
 import { deletePlacedBet } from "@/app/api/userPlacedBets";
-import { Trash2, ChevronDown } from "lucide-react";
+import { approveBet, denyBet } from "@/app/api/bets";
+import { Trash2, ChevronDown, Clock, Check, X, Edit } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface BetCardProps {
@@ -21,6 +23,9 @@ interface BetCardProps {
   onEndBet?: (betId: number) => void;
   availableMoney: number;
   onMoneyChange: (newMoney: number) => void;
+  isAdmin?: boolean;
+  partyMembers?: PartyMember[];
+  onBetUpdated?: () => void;
 }
 
 export function BetCard({
@@ -34,10 +39,18 @@ export function BetCard({
   onEndBet,
   availableMoney,
   onMoneyChange,
+  isAdmin = false,
+  partyMembers = [],
+  onBetUpdated,
 }: BetCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [editApproveModalOpen, setEditApproveModalOpen] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [denying, setDenying] = useState(false);
+
+  const isPending = bet.status === "pending";
 
   // Handle remove placed bet with party_id
   const handleRemoveBet = async () => {
@@ -68,6 +81,40 @@ export function BetCard({
       alert(err.response?.data?.message || "Failed to remove bet");
     } finally {
       setRemoving(false);
+    }
+  };
+
+  // Handle quick approve (without edits)
+  const handleQuickApprove = async () => {
+    if (!confirm("Are you sure you want to approve this bet as-is?")) {
+      return;
+    }
+
+    setApproving(true);
+    try {
+      await approveBet(bet.bet_id, undefined, partyId, password);
+      onBetUpdated?.();
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to approve bet");
+    } finally {
+      setApproving(false);
+    }
+  };
+
+  // Handle deny bet
+  const handleDeny = async () => {
+    if (!confirm("Are you sure you want to deny and delete this bet?")) {
+      return;
+    }
+
+    setDenying(true);
+    try {
+      await denyBet(bet.bet_id, partyId, password);
+      onBetUpdated?.();
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to deny bet");
+    } finally {
+      setDenying(false);
     }
   };
 
@@ -142,10 +189,20 @@ export function BetCard({
 
   return (
     <>
-      <Card className="p-4 sm:p-5">
+      <Card className="p-4 sm:p-5 relative">
         <div className="space-y-3">
+          {/* Pending Icon in Top Right */}
+          {isPending && (
+            <div className="absolute top-3 right-3">
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Pending
+              </Badge>
+            </div>
+          )}
+
           <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 pr-20">
               <h3 className="font-semibold text-base sm:text-lg leading-tight">
                 {bet.name}
               </h3>
@@ -153,7 +210,7 @@ export function BetCard({
                 {bet.description}
               </p>
             </div>
-            {!bet.in_progress && (
+            {!bet.in_progress && !isPending && (
               <Badge variant="outline" className="flex-shrink-0">
                 Ended
               </Badge>
@@ -258,7 +315,43 @@ export function BetCard({
 
           {renderPlacementInfo()}
 
-          {bet.in_progress && !bet.user_placement.has_placed && (
+          {/* Admin Actions for Pending Bets */}
+          {isPending && isAdmin && (
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                onClick={handleQuickApprove}
+                disabled={approving || denying}
+                size="sm"
+                className="flex-1"
+              >
+                <Check className="h-4 w-4 mr-1" />
+                {approving ? "Approving..." : "Approve"}
+              </Button>
+              <Button
+                onClick={() => setEditApproveModalOpen(true)}
+                disabled={approving || denying}
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit & Approve
+              </Button>
+              <Button
+                onClick={handleDeny}
+                disabled={approving || denying}
+                variant="destructive"
+                size="sm"
+                className="flex-1"
+              >
+                <X className="h-4 w-4 mr-1" />
+                {denying ? "Denying..." : "Deny"}
+              </Button>
+            </div>
+          )}
+
+          {/* Place Bet Button (only for approved bets) */}
+          {!isPending && bet.in_progress && !bet.user_placement.has_placed && (
             <Button
               onClick={() => setDialogOpen(true)}
               disabled={betsLocked}
@@ -268,7 +361,8 @@ export function BetCard({
             </Button>
           )}
 
-          {showEndButton && bet.in_progress && onEndBet && (
+          {/* End Bet Button (only for approved bets) */}
+          {!isPending && showEndButton && bet.in_progress && onEndBet && (
             <Button
               onClick={() => onEndBet(bet.bet_id)}
               variant="outline"
@@ -279,6 +373,18 @@ export function BetCard({
           )}
         </div>
       </Card>
+
+      {/* Edit & Approve Modal */}
+      {isPending && isAdmin && (
+        <EditApproveBetModal
+          open={editApproveModalOpen}
+          onOpenChange={setEditApproveModalOpen}
+          bet={bet}
+          partyId={partyId}
+          password={password}
+          onBetApproved={() => onBetUpdated?.()}
+        />
+      )}
 
       <PlaceBetDialog
         bet={bet}
