@@ -191,7 +191,7 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyUpdate={(newMoney) => setAvailableMoney(newMoney)}
+                  onMoneyChange={(newMoney: number) => setAvailableMoney(newMoney)}
                   isAdmin={isAdmin}
                   betsLocked={false}
                   onBetPlaced={refreshBets}
@@ -232,7 +232,7 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyUpdate={(newMoney) => setAvailableMoney(newMoney)}
+                  onMoneyChange={(newMoney: number) => setAvailableMoney(newMoney)}
                   isAdmin={isAdmin}
                   betsLocked={false}
                   onBetPlaced={refreshBets}
@@ -273,7 +273,7 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyUpdate={(newMoney) => setAvailableMoney(newMoney)}
+                  onMoneyChange={(newMoney: number) => setAvailableMoney(newMoney)}
                   isAdmin={isAdmin}
                   betsLocked={false}
                   onBetPlaced={refreshBets}
