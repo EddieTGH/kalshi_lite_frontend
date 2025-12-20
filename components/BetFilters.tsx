@@ -11,14 +11,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type ResolveStatus = "all" | "active" | "resolved";
 export type ApprovalStatus = "all" | "pending" | "approved";
@@ -70,30 +64,37 @@ export function BetFilters({
   // Toggle a specific person
   const togglePerson = (userId: number) => {
     setSelectedPeople((prev) => {
-      if (prev.includes(userId)) {
-        return prev.filter((id) => id !== userId);
-      } else {
-        return [...prev, userId];
-      }
+      const newPeople = prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId];
+      applyFilters(newPeople, resolveStatus, approvalStatus);
+      return newPeople;
     });
   };
 
   // Select all people
   const selectAllPeople = () => {
-    setSelectedPeople(partyMembers.map((m) => m.user_id));
+    const allPeopleIds = partyMembers.map((m) => m.user_id);
+    setSelectedPeople(allPeopleIds);
+    applyFilters(allPeopleIds, resolveStatus, approvalStatus);
   };
 
   // Deselect all people
   const deselectAllPeople = () => {
     setSelectedPeople([]);
+    applyFilters([], resolveStatus, approvalStatus);
   };
 
-  // Handle submit
-  const handleSubmit = () => {
+  // Auto-apply filters whenever they change
+  const applyFilters = (
+    people: number[] = selectedPeople,
+    resolve: ResolveStatus = resolveStatus,
+    approval: ApprovalStatus = approvalStatus
+  ) => {
     onApplyFilters({
-      peopleInvolved: selectedPeople,
-      resolveStatus,
-      approvalStatus,
+      peopleInvolved: people,
+      resolveStatus: resolve,
+      approvalStatus: approval,
     });
   };
 
@@ -122,127 +123,179 @@ export function BetFilters({
   };
 
   return (
-    <Card className="p-4 space-y-4">
-      <div className="space-y-3">
+    <Card className="p-4 space-y-4 bg-white dark:bg-gray-900">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-sm">Filter Bets</h3>
+          <h3 className="font-semibold text-lg">Filter Bets</h3>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleReset}
-            className="h-7 text-xs"
+            className="h-8 text-sm"
           >
             Reset
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* People Involved Filter */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              People Involved
-            </Label>
-            <Popover open={peoplePopoverOpen} onOpenChange={setPeoplePopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-between text-sm h-9"
-                >
-                  <span className="truncate">{getPeopleDisplayText()}</span>
-                  <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-64 p-0 bg-white dark:bg-gray-950" align="start">
-                <div className="p-3 border-b space-y-2">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={selectAllPeople}
-                      className="flex-1 h-8 text-xs"
-                    >
-                      Select All
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={deselectAllPeople}
-                      className="flex-1 h-8 text-xs"
-                    >
-                      Deselect All
-                    </Button>
-                  </div>
+        {/* People Involved Filter */}
+        <div className="space-y-2">
+          <Label className="text-sm text-muted-foreground">
+            People Involved
+          </Label>
+          <Popover open={peoplePopoverOpen} onOpenChange={setPeoplePopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between text-sm h-10"
+              >
+                <span className="truncate">{getPeopleDisplayText()}</span>
+                <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-0 bg-white dark:bg-gray-950" align="start">
+              <div className="p-3 border-b space-y-2">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAllPeople}
+                    className="flex-1 h-8 text-xs"
+                  >
+                    Select All
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={deselectAllPeople}
+                    className="flex-1 h-8 text-xs"
+                  >
+                    Deselect All
+                  </Button>
                 </div>
-                <div className="max-h-64 overflow-y-auto p-2">
-                  {partyMembers.map((member) => {
-                    const isSelected = selectedPeople.includes(member.user_id);
-                    return (
-                      <div
-                        key={member.user_id}
-                        className="flex items-center space-x-2 py-2 px-2 hover:bg-accent rounded-sm cursor-pointer"
-                        onClick={() => togglePerson(member.user_id)}
+              </div>
+              <div className="max-h-64 overflow-y-auto p-2">
+                {partyMembers.map((member) => {
+                  const isSelected = selectedPeople.includes(member.user_id);
+                  return (
+                    <div
+                      key={member.user_id}
+                      className="flex items-center space-x-2 py-2 px-2 hover:bg-accent rounded-sm cursor-pointer"
+                      onClick={() => togglePerson(member.user_id)}
+                    >
+                      <Checkbox
+                        id={`person-${member.user_id}`}
+                        checked={isSelected}
+                        onCheckedChange={() => togglePerson(member.user_id)}
+                      />
+                      <label
+                        htmlFor={`person-${member.user_id}`}
+                        className="text-sm flex-1 cursor-pointer"
                       >
-                        <Checkbox
-                          id={`person-${member.user_id}`}
-                          checked={isSelected}
-                          onCheckedChange={() => togglePerson(member.user_id)}
-                        />
-                        <label
-                          htmlFor={`person-${member.user_id}`}
-                          className="text-sm flex-1 cursor-pointer"
-                        >
-                          {member.name}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
+                        {member.name}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
 
-          {/* Resolve Status Filter */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Resolve Status
-            </Label>
-            <Select value={resolveStatus} onValueChange={(value: ResolveStatus) => setResolveStatus(value)}>
-              <SelectTrigger className="w-full h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Bets</SelectItem>
-                <SelectItem value="active">Active / Unresolved</SelectItem>
-                <SelectItem value="resolved">Inactive / Resolved</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Approval Status Filter */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Approval Status
-            </Label>
-            <Select value={approvalStatus} onValueChange={(value: ApprovalStatus) => setApprovalStatus(value)}>
-              <SelectTrigger className="w-full h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Bets</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Resolve Status Filter */}
+        <div className="space-y-2">
+          <Label className="text-sm text-muted-foreground">
+            Resolve Status
+          </Label>
+          <div className="flex gap-2">
+            <Button
+              variant={resolveStatus === "all" ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                resolveStatus === "all" && "bg-primary text-primary-foreground"
+              )}
+              onClick={() => {
+                setResolveStatus("all");
+                applyFilters(selectedPeople, "all", approvalStatus);
+              }}
+            >
+              All
+            </Button>
+            <Button
+              variant={resolveStatus === "active" ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                resolveStatus === "active" && "bg-primary text-primary-foreground"
+              )}
+              onClick={() => {
+                setResolveStatus("active");
+                applyFilters(selectedPeople, "active", approvalStatus);
+              }}
+            >
+              Unresolved
+            </Button>
+            <Button
+              variant={resolveStatus === "resolved" ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                resolveStatus === "resolved" && "bg-primary text-primary-foreground"
+              )}
+              onClick={() => {
+                setResolveStatus("resolved");
+                applyFilters(selectedPeople, "resolved", approvalStatus);
+              }}
+            >
+              Resolved
+            </Button>
           </div>
         </div>
 
-        {/* Submit Button */}
-        <Button
-          onClick={handleSubmit}
-          className="w-full bg-primary hover:bg-primary/90"
-        >
-          Apply Filters
-        </Button>
+        {/* Approval Status Filter */}
+        <div className="space-y-2">
+          <Label className="text-sm text-muted-foreground">
+            Approval Status
+          </Label>
+          <div className="flex gap-2">
+            <Button
+              variant={approvalStatus === "all" ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                approvalStatus === "all" && "bg-primary text-primary-foreground"
+              )}
+              onClick={() => {
+                setApprovalStatus("all");
+                applyFilters(selectedPeople, resolveStatus, "all");
+              }}
+            >
+              All
+            </Button>
+            <Button
+              variant={approvalStatus === "approved" ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                approvalStatus === "approved" && "bg-primary text-primary-foreground"
+              )}
+              onClick={() => {
+                setApprovalStatus("approved");
+                applyFilters(selectedPeople, resolveStatus, "approved");
+              }}
+            >
+              Approved
+            </Button>
+            <Button
+              variant={approvalStatus === "pending" ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                approvalStatus === "pending" && "bg-primary text-primary-foreground"
+              )}
+              onClick={() => {
+                setApprovalStatus("pending");
+                applyFilters(selectedPeople, resolveStatus, "pending");
+              }}
+            >
+              Pending
+            </Button>
+          </div>
+        </div>
       </div>
     </Card>
   );
