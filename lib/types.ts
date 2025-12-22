@@ -26,6 +26,22 @@ export interface PartyWithMembership extends Party {
   member_count: number; // Total members in party
 }
 
+// Bet History types (for leaderboard)
+export interface BetHistory {
+  bet_id: number;
+  bet_name: string;
+  bet_description: string;
+  odds_for_yes: number;
+  odds_for_no: number;
+  outcome: "yes" | "no";
+  amount_bet: number;
+  decision: "yes" | "no";
+  payout: number;
+  profit: number;
+  placed_at: string | Date;
+  resolved_at: string | Date;
+}
+
 // Party Member types (v2.0)
 export interface PartyMember {
   user_id: number;
@@ -34,6 +50,7 @@ export interface PartyMember {
   money: number; // Party-specific available balance
   total_money: number; // money + money invested in active bets for this party
   joined_at?: string | Date;
+  bet_history?: BetHistory[]; // Resolved bets for this member
 }
 
 // Bet types (v2.0 - now includes party_id)
