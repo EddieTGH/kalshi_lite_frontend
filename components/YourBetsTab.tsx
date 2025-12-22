@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BetWithPlacement, PartyMember } from "@/lib/types";
-import { getBetsForUser } from "@/app/api/bets";
-import { getPartyMembers } from "@/app/api/parties";
+import { useBetsCache } from "@/lib/bets-cache-context";
 import { BetCard } from "./BetCard";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
@@ -27,62 +26,32 @@ export function YourBetsTab({
   onNavigateToCreate,
 }: YourBetsTabProps) {
   const router = useRouter();
-  const [bets, setBets] = useState<BetWithPlacement[]>([]);
-  const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [availableMoney, setAvailableMoney] = useState<number>(0);
+
+  /**
+   * USE BETS CACHE
+   * Read from shared cache - this provides instant display when switching tabs
+   * The cache is automatically refreshed every 30 seconds in the background
+   */
+  const { cache, loading, invalidateCache } = useBetsCache();
+
+  // Extract data from cache (all tabs share the same cache)
+  const bets = cache.bets;
+  const partyMembers = cache.partyMembers;
+  const availableMoney = cache.availableMoney;
+
+  // Local state for UI interactions only
   const [resolvedExpanded, setResolvedExpanded] = useState(true);
   const [unresolvedExpanded, setUnresolvedExpanded] = useState(true);
   const [pendingExpanded, setPendingExpanded] = useState(true);
 
-  // Fetch bets and party members
-  const fetchBets = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const [betsData, membersData] = await Promise.all([
-        getBetsForUser(userId, partyId, password),
-        getPartyMembers(partyId, password),
-      ]);
-      setBets(betsData);
-      setPartyMembers(membersData);
-
-      // Set current user's available money
-      const currentUser = membersData.find((m) => m.user_id === userId);
-      if (currentUser) {
-        setAvailableMoney(currentUser.money);
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to load bets");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Refresh bets without showing loading spinner
+  /**
+   * SILENT REFRESH
+   * Called after user actions (place bet, remove bet, etc.)
+   * Updates cache in background without showing loading spinner
+   */
   const refreshBets = async () => {
-    try {
-      const [betsData, membersData] = await Promise.all([
-        getBetsForUser(userId, partyId, password),
-        getPartyMembers(partyId, password),
-      ]);
-      setBets(betsData);
-      setPartyMembers(membersData);
-
-      // Update available money
-      const currentUser = membersData.find((m) => m.user_id === userId);
-      if (currentUser) {
-        setAvailableMoney(currentUser.money);
-      }
-    } catch (err) {
-      console.error("Failed to refresh bets:", err);
-    }
+    await invalidateCache();
   };
-
-  useEffect(() => {
-    fetchBets();
-  }, [userId, partyId, password]);
 
   // Filter to show only bets the user has invested in
   const yourBets = bets.filter((bet) => bet.user_placement.has_placed);
@@ -105,19 +74,11 @@ export function YourBetsTab({
     (bet) => bet.in_progress && bet.status === "approved"
   );
 
-  if (loading) {
+  // Show loading only on initial load (when cache is empty)
+  if (loading && bets.length === 0) {
     return (
       <div className="flex justify-center items-center py-12">
         <div className="text-lg">Loading your bets...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-red-500 mb-4">{error}</p>
-        <Button onClick={fetchBets}>Try Again</Button>
       </div>
     );
   }
@@ -127,7 +88,9 @@ export function YourBetsTab({
       {/* Available Money Display */}
       <div className="bg-white rounded-lg border p-4">
         <p className="text-sm text-muted-foreground">Available Money</p>
-        <p className="text-2xl font-bold">${availableMoney.toFixed(2)}</p>
+        <p className="text-2xl font-bold">
+          ${availableMoney.toFixed(2)}
+        </p>
       </div>
 
       {/* Action Buttons */}
@@ -191,7 +154,10 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyChange={(newMoney: number) => setAvailableMoney(newMoney)}
+                  onMoneyChange={() => {
+                    // Money change is handled by cache refresh
+                    refreshBets();
+                  }}
                   isAdmin={isAdmin}
                   betsLocked={false}
                   onBetPlaced={refreshBets}
@@ -232,7 +198,10 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyChange={(newMoney: number) => setAvailableMoney(newMoney)}
+                  onMoneyChange={() => {
+                    // Money change is handled by cache refresh
+                    refreshBets();
+                  }}
                   isAdmin={isAdmin}
                   betsLocked={false}
                   onBetPlaced={refreshBets}
@@ -273,7 +242,10 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyChange={(newMoney: number) => setAvailableMoney(newMoney)}
+                  onMoneyChange={() => {
+                    // Money change is handled by cache refresh
+                    refreshBets();
+                  }}
                   isAdmin={isAdmin}
                   betsLocked={false}
                   onBetPlaced={refreshBets}

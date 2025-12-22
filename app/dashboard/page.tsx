@@ -11,6 +11,7 @@ import { ViewBetsTab } from "@/components/ViewBetsTab";
 import { YourBetsTab } from "@/components/YourBetsTab";
 import { CreateBetsTab } from "@/components/CreateBetsTab";
 import { PartyHeader } from "@/components/PartyHeader";
+import { BetsCacheProvider } from "@/lib/bets-cache-context";
 import { LogOut, ArrowLeft, User, Search, Trophy } from "lucide-react";
 
 export default function DashboardPage() {
@@ -135,53 +136,62 @@ export default function DashboardPage() {
           <PartyHeader onPartyChange={handlePartyChange} />
         </div>
 
-        {/* Tabs for Your Bets / Browse Bets / Leaderboard */}
-        <Tabs
-          value={currentTab}
-          onValueChange={setCurrentTab}
-          className="space-y-4"
+        {/*
+          BETS CACHE PROVIDER
+          Wraps the tabs to provide shared caching for "Your Bets" and "Browse Bets"
+          - Shows cached data immediately when switching tabs (no loading spinner)
+          - Refreshes all data silently in background every 30 seconds
+          - See /lib/bets-cache-context.tsx and /docs/caching-strategy.md for details
+        */}
+        <BetsCacheProvider
+          userId={user.user_id}
+          partyId={currentParty.party_id}
+          password={password}
         >
-          {/* Tab Content */}
-          {/* Your Bets Tab (New) */}
-          <TabsContent value="your-bets">
-            <YourBetsTab
-              userId={user.user_id}
-              partyId={currentParty.party_id}
-              password={password}
-              isAdmin={isPartyAdmin}
-              onNavigateToBrowse={handleNavigateToBrowse}
-              onNavigateToCreate={handleNavigateToCreate}
-              key={refreshKey}
-            />
-          </TabsContent>
-
-          {/* Browse Bets Tab */}
-          <TabsContent value="browse-bets">
-            {isPartyAdmin ? (
-              <ViewBetsTab
+          {/* Tabs for Your Bets / Browse Bets / Leaderboard */}
+          <Tabs
+            value={currentTab}
+            onValueChange={setCurrentTab}
+            className="space-y-4"
+          >
+            {/* Tab Content */}
+            {/* Your Bets Tab (New) */}
+            <TabsContent value="your-bets">
+              <YourBetsTab
                 userId={user.user_id}
+                partyId={currentParty.party_id}
+                password={password}
+                isAdmin={isPartyAdmin}
+                onNavigateToBrowse={handleNavigateToBrowse}
+                onNavigateToCreate={handleNavigateToCreate}
+              />
+            </TabsContent>
+
+            {/* Browse Bets Tab */}
+            <TabsContent value="browse-bets">
+              {isPartyAdmin ? (
+                <ViewBetsTab
+                  userId={user.user_id}
+                  partyId={currentParty.party_id}
+                  password={password}
+                />
+              ) : (
+                <BetsTab
+                  userId={user.user_id}
+                  partyId={currentParty.party_id}
+                  password={password}
+                />
+              )}
+            </TabsContent>
+
+            {/* Leaderboard Tab */}
+            <TabsContent value="leaderboard">
+              <LeaderboardTab
                 partyId={currentParty.party_id}
                 password={password}
                 key={refreshKey}
               />
-            ) : (
-              <BetsTab
-                userId={user.user_id}
-                partyId={currentParty.party_id}
-                password={password}
-                key={refreshKey}
-              />
-            )}
-          </TabsContent>
-
-          {/* Leaderboard Tab */}
-          <TabsContent value="leaderboard">
-            <LeaderboardTab
-              partyId={currentParty.party_id}
-              password={password}
-              key={refreshKey}
-            />
-          </TabsContent>
+            </TabsContent>
 
           {/* Bottom Navigation Bar */}
           <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-3 h-20 rounded-t-3xl border-t bg-white shadow-2xl px-2 gap-0 [&>*]:border-0">
@@ -207,7 +217,8 @@ export default function DashboardPage() {
               <span className="text-xs font-medium">Leaderboard</span>
             </TabsTrigger>
           </TabsList>
-        </Tabs>
+          </Tabs>
+        </BetsCacheProvider>
       </div>
     </div>
   );

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { BetWithPlacement, PartyMember, EndBetResponse } from "@/lib/types";
-import { getBetsForUser, endBet } from "@/app/api/bets";
-import { getLockStatus, updateLockStatus } from "@/app/api/settings";
-import { getPartyMembers } from "@/app/api/parties";
+import { endBet } from "@/app/api/bets";
+import { updateLockStatus } from "@/app/api/settings";
+import { useBetsCache } from "@/lib/bets-cache-context";
 import { BetCard } from "./BetCard";
 import { BetFilters, BetFilterState } from "./BetFilters";
 import { BetEndedDialog } from "./BetEndedDialog";
@@ -29,18 +29,26 @@ interface ViewBetsTabProps {
 }
 
 export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
-  const [bets, setBets] = useState<BetWithPlacement[]>([]);
-  const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [betsLocked, setBetsLocked] = useState(false);
+  /**
+   * USE BETS CACHE
+   * Read from shared cache - this provides instant display when switching tabs
+   * The cache is automatically refreshed every 30 seconds in the background
+   */
+  const { cache, loading, invalidateCache } = useBetsCache();
+
+  // Extract data from cache (all tabs share the same cache)
+  const bets = cache.bets;
+  const partyMembers = cache.partyMembers;
+  const availableMoney = cache.availableMoney;
+  const betsLocked = cache.betsLocked;
+
+  // Local state for UI interactions
   const [lockLoading, setLockLoading] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [endBetDialogOpen, setEndBetDialogOpen] = useState(false);
   const [selectedBetId, setSelectedBetId] = useState<number | null>(null);
   const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no">("yes");
   const [endingBet, setEndingBet] = useState(false);
-  const [availableMoney, setAvailableMoney] = useState<number>(0);
   const [betEndedDialogOpen, setBetEndedDialogOpen] = useState(false);
   const [betEndedResult, setBetEndedResult] = useState<EndBetResponse | null>(null);
 
@@ -50,6 +58,15 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
     resolveStatus: "all",
     approvalStatus: "approved",
   });
+
+  /**
+   * SILENT REFRESH
+   * Called after user actions (place bet, end bet, etc.)
+   * Updates cache in background without showing loading spinner
+   */
+  const refreshBets = async () => {
+    await invalidateCache();
+  };
 
   // Initialize filters with all people selected once party members load
   useEffect(() => {
@@ -61,66 +78,15 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
     }
   }, [partyMembers]);
 
-  // Fetch bets, lock status, and party members for the current party
-  const fetchBets = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const [betsData, lockData, membersData] = await Promise.all([
-        getBetsForUser(userId, partyId, password),
-        getLockStatus(partyId, password),
-        getPartyMembers(partyId, password),
-      ]);
-      setBets(betsData);
-      setBetsLocked(lockData.bets_locked);
-      setPartyMembers(membersData);
-
-      // Set current user's available money
-      const currentUser = membersData.find((m) => m.user_id === userId);
-      if (currentUser) {
-        setAvailableMoney(currentUser.money);
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to load bets");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Refresh bets without showing loading spinner (silent refresh)
-  const refreshBets = async () => {
-    try {
-      const [betsData, membersData] = await Promise.all([
-        getBetsForUser(userId, partyId, password),
-        getPartyMembers(partyId, password),
-      ]);
-      setBets(betsData);
-      setPartyMembers(membersData);
-
-      // Set current user's available money
-      const currentUser = membersData.find((m) => m.user_id === userId);
-      if (currentUser) {
-        setAvailableMoney(currentUser.money);
-      }
-    } catch (err: any) {
-      // Silently fail or show a toast notification instead of disrupting the UI
-      console.error("Failed to refresh bets:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchBets();
-  }, [userId, partyId, password]); // Re-fetch when party changes
-
   // Handle lock/unlock betting for this party
   const handleLockToggle = async (checked: boolean) => {
     setLockLoading(true);
     try {
       await updateLockStatus({ bets_locked: checked }, partyId, password);
-      setBetsLocked(checked);
+      // Refresh cache to update lock status
+      await refreshBets();
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to update lock status");
-      // Revert on error
     } finally {
       setLockLoading(false);
     }
@@ -198,7 +164,8 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
 
   const displayBets = applyFilters(bets);
 
-  if (loading) {
+  // Show loading only on initial load (when cache is empty)
+  if (loading && bets.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-lg text-muted-foreground">Loading bets...</div>
@@ -249,12 +216,6 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
           />
         </div>
 
-        {error && (
-          <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">
-            {error}
-          </div>
-        )}
-
         {displayBets.length === 0 ? (
           <Card className="p-8 text-center text-muted-foreground">
             No bets match your current filters
@@ -273,7 +234,10 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
                 showEndButton={true}
                 onEndBet={handleEndBetClick}
                 availableMoney={availableMoney}
-                onMoneyChange={setAvailableMoney}
+                onMoneyChange={() => {
+                  // Money change is handled by cache refresh
+                  refreshBets();
+                }}
                 isAdmin={true}
                 partyMembers={partyMembers}
                 onBetUpdated={refreshBets}
