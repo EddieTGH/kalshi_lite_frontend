@@ -39,7 +39,7 @@ export default function DashboardPage() {
   };
 
   // Handle bet created - refresh and return to your bets
-  const handleBetCreated = () => {
+  const handleBetCreated = async () => {
     setCurrentTab("your-bets");
   };
 

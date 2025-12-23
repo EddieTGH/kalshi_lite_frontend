@@ -24,7 +24,7 @@ interface PlaceBetDialogProps {
   onOpenChange: (open: boolean) => void;
   onSuccess: () => Promise<void>; // Make this async to wait for refresh
   availableMoney: number;
-  onMoneyChange: (newMoney: number) => void;
+  onMoneyChange: (newMoney: number) => Promise<void>;
 }
 
 export function PlaceBetDialog({
@@ -77,8 +77,8 @@ export function PlaceBetDialog({
         partyId,
         password
       );
-      // Update available money immediately
-      onMoneyChange(response.user_money_remaining);
+      // Update available money and wait for cache refresh
+      await onMoneyChange(response.user_money_remaining);
 
       // Wait for refresh to complete before closing modal
       await onSuccess();

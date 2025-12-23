@@ -26,10 +26,10 @@ interface BetCardProps {
   showEndButton?: boolean;
   onEndBet?: (betId: number) => void;
   availableMoney: number;
-  onMoneyChange: (newMoney: number) => void;
+  onMoneyChange: (newMoney: number) => Promise<void>;
   isAdmin?: boolean;
   partyMembers?: PartyMember[];
-  onBetUpdated?: () => void;
+  onBetUpdated?: () => Promise<void>;
 }
 
 export function BetCard({
@@ -76,8 +76,8 @@ export function BetCard({
         partyId,
         password
       );
-      // Update available money immediately
-      onMoneyChange(response.user_money_remaining);
+      // Update available money and wait for cache refresh
+      await onMoneyChange(response.user_money_remaining);
 
       // Wait for refresh to complete before hiding "Removing..." state
       await onBetPlaced();
@@ -97,7 +97,7 @@ export function BetCard({
     setApproving(true);
     try {
       await approveBet(bet.bet_id, undefined, partyId, password);
-      onBetUpdated?.();
+      await onBetUpdated?.();
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to approve bet");
     } finally {
@@ -114,7 +114,7 @@ export function BetCard({
     setDenying(true);
     try {
       await denyBet(bet.bet_id, partyId, password);
-      onBetUpdated?.();
+      await onBetUpdated?.();
     } catch (err: any) {
       alert(err.response?.data?.message || "Failed to deny bet");
     } finally {
@@ -426,7 +426,7 @@ export function BetCard({
           bet={bet}
           partyId={partyId}
           password={password}
-          onBetApproved={() => onBetUpdated?.()}
+          onBetApproved={async () => { if (onBetUpdated) await onBetUpdated(); }}
         />
       )}
 

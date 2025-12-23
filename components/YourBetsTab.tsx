@@ -139,9 +139,9 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyChange={() => {
+                  onMoneyChange={async () => {
                     // Money change is handled by cache refresh
-                    refreshBets();
+                    await refreshBets();
                   }}
                   isAdmin={isAdmin}
                   betsLocked={false}
@@ -183,9 +183,9 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyChange={() => {
+                  onMoneyChange={async () => {
                     // Money change is handled by cache refresh
-                    refreshBets();
+                    await refreshBets();
                   }}
                   isAdmin={isAdmin}
                   betsLocked={false}
@@ -227,9 +227,9 @@ export function YourBetsTab({
                   partyMembers={partyMembers}
                   onBetUpdated={refreshBets}
                   availableMoney={availableMoney}
-                  onMoneyChange={() => {
+                  onMoneyChange={async () => {
                     // Money change is handled by cache refresh
-                    refreshBets();
+                    await refreshBets();
                   }}
                   isAdmin={isAdmin}
                   betsLocked={false}

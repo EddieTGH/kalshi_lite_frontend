@@ -8,6 +8,7 @@ import { useBetsCache } from "@/lib/bets-cache-context";
 import { BetCard } from "./BetCard";
 import { BetFilters, BetFilterState } from "./BetFilters";
 import { BetEndedDialog } from "./BetEndedDialog";
+import { LoadingOverlay } from "./LoadingOverlay";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -112,7 +113,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
       );
       setEndBetDialogOpen(false);
       setSelectedBetId(null);
-      refreshBets(); // Silent refresh - no loading spinner
+      await refreshBets();
 
       // Show detailed results dialog
       setBetEndedResult(result);
@@ -234,9 +235,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
                 showEndButton={true}
                 onEndBet={handleEndBetClick}
                 availableMoney={availableMoney}
-                onMoneyChange={() => {
+                onMoneyChange={async () => {
                   // Money change is handled by cache refresh
-                  refreshBets();
+                  await refreshBets();
                 }}
                 isAdmin={true}
                 partyMembers={partyMembers}
@@ -303,6 +304,11 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
         open={betEndedDialogOpen}
         onOpenChange={setBetEndedDialogOpen}
         betResult={betEndedResult}
+      />
+
+      <LoadingOverlay
+        isVisible={lockLoading}
+        message="Updating betting status..."
       />
     </>
   );

@@ -25,7 +25,7 @@ interface EditApproveBetModalProps {
   bet: BetWithPlacement;
   partyId: number;
   password: string;
-  onBetApproved: () => void;
+  onBetApproved: () => Promise<void>;
 }
 
 export function EditApproveBetModal({
@@ -119,7 +119,7 @@ export function EditApproveBetModal({
         await approveBet(bet.bet_id, undefined, partyId, password);
       }
 
-      onBetApproved();
+      await onBetApproved();
       onOpenChange(false);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to approve bet");

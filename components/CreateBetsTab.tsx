@@ -10,12 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { PartyMember } from "@/lib/types";
 import { createBet } from "@/app/api/bets";
 import { getPartyMembers } from "@/app/api/parties";
+import { useBetsCache } from "@/lib/bets-cache-context";
 import { X } from "lucide-react";
 
 interface CreateBetsTabProps {
   partyId: number; // Party ID is now required
   password: string;
-  onBetCreated?: () => void;
+  onBetCreated?: () => Promise<void>;
 }
 
 export function CreateBetsTab({
@@ -23,6 +24,7 @@ export function CreateBetsTab({
   password,
   onBetCreated,
 }: CreateBetsTabProps) {
+  const { invalidateCache } = useBetsCache();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [oddsForYes, setOddsForYes] = useState("50");
@@ -84,13 +86,18 @@ export function CreateBetsTab({
         partyId,
         password
       );
+      // Invalidate cache to refresh all bet data
+      await invalidateCache();
+
       setSuccess("Bet created successfully!");
       setName("");
       setDescription("");
       setOddsForYes("50");
       setPeopleInvolved([]);
+
+      // Wait for any additional callback (like tab navigation) to complete
       if (onBetCreated) {
-        onBetCreated();
+        await onBetCreated();
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to create bet");

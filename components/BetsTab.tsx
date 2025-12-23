@@ -152,9 +152,9 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
               betsLocked={betsLocked}
               onBetPlaced={refreshBets}
               availableMoney={availableMoney}
-              onMoneyChange={() => {
+              onMoneyChange={async () => {
                 // Money change is handled by cache refresh
-                refreshBets();
+                await refreshBets();
               }}
               isAdmin={false}
               partyMembers={partyMembers}
