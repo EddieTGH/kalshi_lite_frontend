@@ -146,7 +146,7 @@ export function BetFilters({
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full justify-between text-sm h-10"
+                className="w-full justify-between text-sm h-10 border-gray-500"
               >
                 <span className="truncate">{getPeopleDisplayText()}</span>
                 <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
@@ -162,7 +162,7 @@ export function BetFilters({
                     variant="outline"
                     size="sm"
                     onClick={selectAllPeople}
-                    className="flex-1 h-8 text-xs"
+                    className="flex-1 h-8 text-xs border-gray-500"
                   >
                     Select All
                   </Button>
@@ -170,7 +170,7 @@ export function BetFilters({
                     variant="outline"
                     size="sm"
                     onClick={deselectAllPeople}
-                    className="flex-1 h-8 text-xs"
+                    className="flex-1 h-8 text-xs border-gray-500"
                   >
                     Deselect All
                   </Button>
@@ -214,7 +214,8 @@ export function BetFilters({
               variant={resolveStatus === "all" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                resolveStatus === "all" && "bg-primary text-primary-foreground"
+                resolveStatus === "all" && "bg-primary text-primary-foreground",
+                resolveStatus !== "all" && "border-gray-500"
               )}
               onClick={() => {
                 setResolveStatus("all");
@@ -228,7 +229,8 @@ export function BetFilters({
               className={cn(
                 "flex-1 h-10",
                 resolveStatus === "active" &&
-                  "bg-primary text-primary-foreground"
+                  "bg-primary text-primary-foreground",
+                resolveStatus !== "active" && "border-gray-500"
               )}
               onClick={() => {
                 setResolveStatus("active");
@@ -242,7 +244,8 @@ export function BetFilters({
               className={cn(
                 "flex-1 h-10",
                 resolveStatus === "resolved" &&
-                  "bg-primary text-primary-foreground"
+                  "bg-primary text-primary-foreground",
+                resolveStatus !== "resolved" && "border-gray-500"
               )}
               onClick={() => {
                 setResolveStatus("resolved");
@@ -264,7 +267,8 @@ export function BetFilters({
               variant={approvalStatus === "all" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                approvalStatus === "all" && "bg-primary text-primary-foreground"
+                approvalStatus === "all" && "bg-primary text-primary-foreground",
+                approvalStatus !== "all" && "border-gray-500"
               )}
               onClick={() => {
                 setApprovalStatus("all");
@@ -278,7 +282,8 @@ export function BetFilters({
               className={cn(
                 "flex-1 h-10",
                 approvalStatus === "approved" &&
-                  "bg-primary text-primary-foreground"
+                  "bg-primary text-primary-foreground",
+                approvalStatus !== "approved" && "border-gray-500"
               )}
               onClick={() => {
                 setApprovalStatus("approved");
@@ -292,7 +297,8 @@ export function BetFilters({
               className={cn(
                 "flex-1 h-10",
                 approvalStatus === "pending" &&
-                  "bg-primary text-primary-foreground"
+                  "bg-primary text-primary-foreground",
+                approvalStatus !== "pending" && "border-gray-500"
               )}
               onClick={() => {
                 setApprovalStatus("pending");

@@ -80,7 +80,7 @@ export function YourBetsTab({
   return (
     <div className="space-y-4">
       {/* Available Money Display */}
-      <div className="bg-card rounded-lg border p-4">
+      <div className="bg-card rounded-lg border border-gray-500 p-4">
         <p className="text-sm text-muted-foreground">Available Money</p>
         <p className="text-2xl font-bold text-card-foreground">
           ${availableMoney.toFixed(2)}
@@ -103,7 +103,7 @@ export function YourBetsTab({
           <p className="text-muted-foreground mb-4">
             You haven&apos;t invested in any bets yet
           </p>
-          <Button onClick={onNavigateToBrowse} variant="outline">
+          <Button onClick={onNavigateToBrowse} variant="outline" className="border-gray-500">
             Browse Available Bets
           </Button>
         </div>
@@ -111,7 +111,7 @@ export function YourBetsTab({
 
       {/* Your Created Pending Bets Section */}
       {yourPendingBets.length > 0 && (
-        <div className="bg-card rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border border-gray-500 overflow-hidden">
           <Button
             variant="ghost"
             onClick={() => setPendingExpanded(!pendingExpanded)}
@@ -155,7 +155,7 @@ export function YourBetsTab({
 
       {/* Resolved Bets Section */}
       {resolvedBets.length > 0 && (
-        <div className="bg-card rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border border-gray-500 overflow-hidden">
           <Button
             variant="ghost"
             onClick={() => setResolvedExpanded(!resolvedExpanded)}
@@ -199,7 +199,7 @@ export function YourBetsTab({
 
       {/* Unresolved Bets Section */}
       {unresolvedBets.length > 0 && (
-        <div className="bg-card rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border border-gray-500 overflow-hidden">
           <Button
             variant="ghost"
             onClick={() => setUnresolvedExpanded(!unresolvedExpanded)}

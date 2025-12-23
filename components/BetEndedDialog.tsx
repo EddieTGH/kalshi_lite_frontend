@@ -53,23 +53,19 @@ export function BetEndedDialog({
 
           {/* Summary Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-muted rounded-lg border border-primary">
+            <div className="p-4 bg-muted rounded-lg border border-gray-500 border-primary">
               <div className="flex items-center gap-2 mb-2">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">
-                  Winners
-                </span>
+                <span className="font-semibold text-foreground">Winners</span>
               </div>
               <div className="text-3xl font-bold text-primary">
                 {winners.length}
               </div>
             </div>
-            <div className="p-4 bg-muted rounded-lg border border-destructive">
+            <div className="p-4 bg-muted rounded-lg border border-gray-500 border-destructive">
               <div className="flex items-center gap-2 mb-2">
                 <XCircle className="h-5 w-5 text-destructive" />
-                <span className="font-semibold text-foreground">
-                  Losers
-                </span>
+                <span className="font-semibold text-foreground">Losers</span>
               </div>
               <div className="text-3xl font-bold text-destructive">
                 {losers.length}
@@ -88,12 +84,14 @@ export function BetEndedDialog({
                 {winners.map((payout) => (
                   <div
                     key={payout.user_id}
-                    className="p-3 bg-muted border border-primary rounded-lg"
+                    className="p-3 bg-muted border border-gray-500 border-primary rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-semibold">{payout.user_name}</span>
                       <Badge
-                        variant={payout.decision === "yes" ? "default" : "secondary"}
+                        variant={
+                          payout.decision === "yes" ? "default" : "secondary"
+                        }
                         className="text-xs"
                       >
                         {payout.decision.toUpperCase()}
@@ -102,11 +100,15 @@ export function BetEndedDialog({
                     <div className="grid grid-cols-3 gap-3 text-sm">
                       <div>
                         <span className="text-muted-foreground">Bet:</span>
-                        <div className="font-medium">${payout.amount_bet.toFixed(2)}</div>
+                        <div className="font-medium">
+                          ${payout.amount_bet.toFixed(2)}
+                        </div>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Payout:</span>
-                        <div className="font-medium">${payout.payout.toFixed(2)}</div>
+                        <div className="font-medium">
+                          ${payout.payout.toFixed(2)}
+                        </div>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Profit:</span>
@@ -132,12 +134,14 @@ export function BetEndedDialog({
                 {losers.map((payout) => (
                   <div
                     key={payout.user_id}
-                    className="p-3 bg-muted border border-destructive rounded-lg"
+                    className="p-3 bg-muted border border-gray-500 border-destructive rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-semibold">{payout.user_name}</span>
                       <Badge
-                        variant={payout.decision === "yes" ? "default" : "secondary"}
+                        variant={
+                          payout.decision === "yes" ? "default" : "secondary"
+                        }
                         className="text-xs"
                       >
                         {payout.decision.toUpperCase()}
@@ -146,11 +150,15 @@ export function BetEndedDialog({
                     <div className="grid grid-cols-3 gap-3 text-sm">
                       <div>
                         <span className="text-muted-foreground">Bet:</span>
-                        <div className="font-medium">${payout.amount_bet.toFixed(2)}</div>
+                        <div className="font-medium">
+                          ${payout.amount_bet.toFixed(2)}
+                        </div>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Payout:</span>
-                        <div className="font-medium">${payout.payout.toFixed(2)}</div>
+                        <div className="font-medium">
+                          ${payout.payout.toFixed(2)}
+                        </div>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Loss:</span>

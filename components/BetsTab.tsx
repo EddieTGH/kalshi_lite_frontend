@@ -64,7 +64,10 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
 
     // Filter by people involved
     // If all people selected (or equal to party member count), don't filter
-    if (filters.peopleInvolved.length > 0 && filters.peopleInvolved.length < partyMembers.length) {
+    if (
+      filters.peopleInvolved.length > 0 &&
+      filters.peopleInvolved.length < partyMembers.length
+    ) {
       filtered = filtered.filter((bet) => {
         // Check if any of the selected people are involved in this bet
         return filters.peopleInvolved.some((personId) =>
@@ -121,10 +124,11 @@ export function BetsTab({ userId, partyId, password }: BetsTabProps) {
           </div>
         </div>
 
-        <div className="bg-muted/50 rounded-lg p-3 sm:p-4 border border-border">
+        <div className="bg-muted/50 rounded-lg p-3 sm:p-4 border border-gray-500 border-border">
           <p className="text-xs sm:text-sm text-muted-foreground">
-            <strong>Note:</strong> Please do not mention bets that involve other people to those
-            specific people as to not ruin the authenticity of the outcomes.
+            <strong>Note:</strong> Please do not mention bets that involve other
+            people to those specific people as to not ruin the authenticity of
+            the outcomes.
           </p>
         </div>
 

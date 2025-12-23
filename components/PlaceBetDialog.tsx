@@ -117,7 +117,7 @@ export function PlaceBetDialog({
               <Button
                 type="button"
                 variant={decision === "yes" ? "default" : "outline"}
-                className={decision === "yes" ? "bg-primary" : ""}
+                className={decision === "yes" ? "bg-primary" : "border-gray-500"}
                 onClick={() => setDecision("yes")}
               >
                 <div className={`flex flex-col items-center w-full`}>
@@ -130,7 +130,7 @@ export function PlaceBetDialog({
               <Button
                 type="button"
                 variant={decision === "no" ? "default" : "outline"}
-                className={decision === "no" ? "bg-secondary" : ""}
+                className={decision === "no" ? "bg-secondary" : "border-gray-500"}
                 onClick={() => setDecision("no")}
               >
                 <div className={`flex flex-col items-center w-full`}>
@@ -193,7 +193,7 @@ export function PlaceBetDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="flex-1 sm:flex-initial"
+            className="flex-1 sm:flex-initial border-gray-500"
           >
             Cancel
           </Button>

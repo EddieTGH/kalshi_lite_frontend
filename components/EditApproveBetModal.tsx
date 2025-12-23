@@ -39,7 +39,9 @@ export function EditApproveBetModal({
   const [name, setName] = useState(bet.name);
   const [description, setDescription] = useState(bet.description || "");
   const [oddsForYes, setOddsForYes] = useState(bet.odds_for_yes.toString());
-  const [peopleInvolved, setPeopleInvolved] = useState<number[]>(bet.people_involved || []);
+  const [peopleInvolved, setPeopleInvolved] = useState<number[]>(
+    bet.people_involved || []
+  );
   const [members, setMembers] = useState<PartyMember[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -99,7 +101,8 @@ export function EditApproveBetModal({
         name.trim() !== bet.name ||
         (description.trim() || "") !== (bet.description || "") ||
         odds !== bet.odds_for_yes ||
-        JSON.stringify(peopleInvolved.sort()) !== JSON.stringify((bet.people_involved || []).sort());
+        JSON.stringify(peopleInvolved.sort()) !==
+          JSON.stringify((bet.people_involved || []).sort());
 
       if (hasChanges) {
         // Approve with edits
@@ -109,7 +112,9 @@ export function EditApproveBetModal({
             name: name.trim(),
             ...(description.trim() && { description: description.trim() }),
             odds_for_yes: odds,
-            ...(peopleInvolved.length > 0 && { people_involved: peopleInvolved }),
+            ...(peopleInvolved.length > 0 && {
+              people_involved: peopleInvolved,
+            }),
           },
           partyId,
           password
@@ -142,7 +147,7 @@ export function EditApproveBetModal({
 
         <div className="space-y-4 py-4">
           {error && (
-            <div className="bg-muted border border-destructive text-destructive px-4 py-3 rounded">
+            <div className="bg-muted border border-gray-500 border-destructive text-destructive px-4 py-3 rounded">
               {error}
             </div>
           )}
@@ -206,7 +211,8 @@ export function EditApproveBetModal({
           <div className="space-y-2">
             <Label>People Involved (Optional)</Label>
             <p className="text-xs text-muted-foreground mb-2">
-              Select people who cannot bet on this bet (they are involved in the outcome)
+              Select people who cannot bet on this bet (they are involved in the
+              outcome)
             </p>
             <div className="flex flex-wrap gap-2">
               {members.map((member) => {
@@ -232,6 +238,7 @@ export function EditApproveBetModal({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="border-gray-500"
           >
             Cancel
           </Button>

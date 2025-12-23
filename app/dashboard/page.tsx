@@ -73,7 +73,7 @@ export default function DashboardPage() {
         {/* Header with User Info and Logout */}
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">
+            <h1 className="text-2xl sm:text-3xl text-primary font-bold text-foreground truncate">
               Welcome, {user.name}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -84,7 +84,7 @@ export default function DashboardPage() {
             variant="outline"
             size="sm"
             onClick={handleLogout}
-            className="gap-2 flex-shrink-0"
+            className="gap-2 flex-shrink-0 border-gray-500"
           >
             <LogOut className="h-4 w-4" />
             Logout

@@ -45,7 +45,9 @@ export function EditPartyModal({
   const [date, setDate] = useState(
     new Date(party.date).toISOString().split("T")[0]
   );
-  const [startingBalance, setStartingBalance] = useState(party.starting_balance);
+  const [startingBalance, setStartingBalance] = useState(
+    party.starting_balance
+  );
 
   // Members state
   const [members, setMembers] = useState<PartyMember[]>([]);
@@ -117,7 +119,8 @@ export function EditPartyModal({
     } catch (err: any) {
       console.error("Failed to update party:", err);
       setError(
-        err.response?.data?.message || "Failed to update party. Please try again."
+        err.response?.data?.message ||
+          "Failed to update party. Please try again."
       );
     } finally {
       setLoading(false);
@@ -230,6 +233,7 @@ export function EditPartyModal({
                   variant="outline"
                   onClick={() => onOpenChange(false)}
                   disabled={loading}
+                  className="border-gray-500"
                 >
                   Cancel
                 </Button>
@@ -264,14 +268,12 @@ export function EditPartyModal({
                     return (
                       <div
                         key={member.user_id}
-                        className="flex items-center justify-between p-3 border rounded-lg"
+                        className="flex items-center justify-between p-3 border border-gray-500 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-medium">
-                                {member.name}
-                              </span>
+                              <span className="font-medium">{member.name}</span>
                               {isCurrentUser && (
                                 <Badge variant="secondary" className="text-xs">
                                   You

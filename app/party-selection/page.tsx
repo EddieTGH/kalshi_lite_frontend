@@ -46,7 +46,8 @@ export default function PartySelectionPage() {
       } catch (err: any) {
         console.error("Failed to fetch parties:", err);
         setError(
-          err.response?.data?.message || "Failed to load parties. Please try again."
+          err.response?.data?.message ||
+            "Failed to load parties. Please try again."
         );
       } finally {
         setLoading(false);
@@ -98,7 +99,7 @@ export default function PartySelectionPage() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+            <h1 className="text-2xl sm:text-3xl text-primary font-bold text-foreground">
               Welcome, {user.name}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -109,7 +110,7 @@ export default function PartySelectionPage() {
             variant="outline"
             size="sm"
             onClick={handleLogout}
-            className="gap-2"
+            className="gap-2 border-gray-500"
           >
             <LogOut className="h-4 w-4" />
             Logout
@@ -124,12 +125,13 @@ export default function PartySelectionPage() {
             disabled={user.remaining_hosts <= 0}
           >
             <Plus className="h-4 w-4" />
-            Create Party {user.remaining_hosts > 0 && `(${user.remaining_hosts} remaining)`}
+            Create Party{" "}
+            {user.remaining_hosts > 0 && `(${user.remaining_hosts} remaining)`}
           </Button>
           <Button
             onClick={() => setShowJoinModal(true)}
             variant="outline"
-            className="gap-2"
+            className="gap-2 border-gray-500"
           >
             <LogIn className="h-4 w-4" />
             Join Party
@@ -193,9 +195,7 @@ export default function PartySelectionPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      <span>
-                        {new Date(party.date).toLocaleDateString()}
-                      </span>
+                      <span>{new Date(party.date).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Users className="h-4 w-4" />

@@ -195,6 +195,7 @@ export function CreatePartyModal({
               variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={loading}
+              className="border-gray-500"
             >
               Cancel
             </Button>

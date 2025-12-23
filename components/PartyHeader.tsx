@@ -59,7 +59,9 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <CardTitle className="text-lg truncate">{currentParty.name}</CardTitle>
+              <CardTitle className="text-lg text-primary truncate">
+                {currentParty.name}
+              </CardTitle>
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -68,6 +70,7 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => router.push("/party-selection")}
+                className="border-gray-500"
               >
                 Switch Party
               </Button>
@@ -77,7 +80,7 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 border-gray-500"
                   onClick={() => setShowEditModal(true)}
                   title="Edit party settings"
                 >
@@ -88,7 +91,7 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="pt-0">
+        <CardContent className="pt-0 -mt-4">
           {/* Join Code and Show Details - Same Line */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">

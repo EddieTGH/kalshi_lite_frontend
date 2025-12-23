@@ -51,7 +51,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no">("yes");
   const [endingBet, setEndingBet] = useState(false);
   const [betEndedDialogOpen, setBetEndedDialogOpen] = useState(false);
-  const [betEndedResult, setBetEndedResult] = useState<EndBetResponse | null>(null);
+  const [betEndedResult, setBetEndedResult] = useState<EndBetResponse | null>(
+    null
+  );
 
   // Filter state
   const [filters, setFilters] = useState<BetFilterState>({
@@ -134,7 +136,10 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
 
     // Filter by people involved
     // If all people selected (or equal to party member count), don't filter
-    if (filters.peopleInvolved.length > 0 && filters.peopleInvolved.length < partyMembers.length) {
+    if (
+      filters.peopleInvolved.length > 0 &&
+      filters.peopleInvolved.length < partyMembers.length
+    ) {
       filtered = filtered.filter((bet) => {
         // Check if any of the selected people are involved in this bet
         return filters.peopleInvolved.some((personId) =>
@@ -202,10 +207,11 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
             />
           </Card>
 
-          <div className="bg-muted/50 rounded-lg p-3 sm:p-4 border border-border">
+          <div className="bg-muted/50 rounded-lg p-3 sm:p-4 border border-gray-500 border-border">
             <p className="text-xs sm:text-sm text-muted-foreground">
-              <strong>Note:</strong> Please do not mention bets that involve other people to those
-              specific people as to not ruin the authenticity of the outcomes.
+              <strong>Note:</strong> Please do not mention bets that involve
+              other people to those specific people as to not ruin the
+              authenticity of the outcomes.
             </p>
           </div>
 
@@ -253,7 +259,8 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
           <DialogHeader>
             <DialogTitle>End Bet</DialogTitle>
             <DialogDescription>
-              Select the final outcome for this bet. All payouts will be processed automatically.
+              Select the final outcome for this bet. All payouts will be
+              processed automatically.
             </DialogDescription>
           </DialogHeader>
 
@@ -284,7 +291,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
               type="button"
               variant="outline"
               onClick={() => setEndBetDialogOpen(false)}
-              className="flex-1 sm:flex-initial"
+              className="flex-1 sm:flex-initial border-gray-500"
             >
               Cancel
             </Button>

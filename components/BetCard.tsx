@@ -193,7 +193,7 @@ export function BetCard({
             size="sm"
             onClick={handleRemoveBet}
             disabled={removing}
-            className="w-full mt-2 text-destructive hover:text-destructive"
+            className="w-full mt-2 text-destructive hover:text-destructive border-gray-500"
           >
             <Trash2 className="h-4 w-4 mr-2" />
             {removing ? "Removing..." : "Remove Bet"}
@@ -293,7 +293,7 @@ export function BetCard({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full flex items-center justify-between"
+                  className="w-full flex items-center justify-between border-gray-500"
                 >
                   <span className="text-sm font-medium">
                     Bet Details ({bet.payouts.length} participant
@@ -307,7 +307,7 @@ export function BetCard({
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-2">
-                <div className="border rounded-lg divide-y">
+                <div className="border border-gray-500 rounded-lg divide-y">
                   {bet.payouts.map((payout) => (
                     <div key={payout.user_id} className="p-3 space-y-1.5">
                       <div className="flex items-center justify-between">
@@ -376,7 +376,7 @@ export function BetCard({
                 disabled={approving || denying}
                 variant="outline"
                 size="sm"
-                className="flex-1"
+                className="flex-1 border-gray-500"
               >
                 <Edit className="h-4 w-4 mr-1" />
                 Edit & Approve
@@ -410,7 +410,7 @@ export function BetCard({
             <Button
               onClick={() => onEndBet(bet.bet_id)}
               variant="outline"
-              className="w-full border-primary text-primary hover:bg-primary/10"
+              className="w-full border-gray-500 text-primary hover:bg-primary/10"
             >
               End Bet
             </Button>
@@ -426,7 +426,9 @@ export function BetCard({
           bet={bet}
           partyId={partyId}
           password={password}
-          onBetApproved={async () => { if (onBetUpdated) await onBetUpdated(); }}
+          onBetApproved={async () => {
+            if (onBetUpdated) await onBetUpdated();
+          }}
         />
       )}
 
