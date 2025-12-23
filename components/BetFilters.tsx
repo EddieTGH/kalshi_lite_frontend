@@ -123,7 +123,7 @@ export function BetFilters({
   };
 
   return (
-    <Card className="p-4 space-y-4 bg-white dark:bg-gray-900">
+    <Card className="p-4 space-y-4 bg-card dark:bg-gray-900">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-lg">Filter Bets</h3>
@@ -152,7 +152,10 @@ export function BetFilters({
                 <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 p-0 bg-white dark:bg-gray-950" align="start">
+            <PopoverContent
+              className="w-64 p-0 bg-card"
+              align="start"
+            >
               <div className="p-3 border-b space-y-2">
                 <div className="flex gap-2">
                   <Button
@@ -224,7 +227,8 @@ export function BetFilters({
               variant={resolveStatus === "active" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                resolveStatus === "active" && "bg-primary text-primary-foreground"
+                resolveStatus === "active" &&
+                  "bg-primary text-primary-foreground"
               )}
               onClick={() => {
                 setResolveStatus("active");
@@ -237,7 +241,8 @@ export function BetFilters({
               variant={resolveStatus === "resolved" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                resolveStatus === "resolved" && "bg-primary text-primary-foreground"
+                resolveStatus === "resolved" &&
+                  "bg-primary text-primary-foreground"
               )}
               onClick={() => {
                 setResolveStatus("resolved");
@@ -272,7 +277,8 @@ export function BetFilters({
               variant={approvalStatus === "approved" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                approvalStatus === "approved" && "bg-primary text-primary-foreground"
+                approvalStatus === "approved" &&
+                  "bg-primary text-primary-foreground"
               )}
               onClick={() => {
                 setApprovalStatus("approved");
@@ -285,7 +291,8 @@ export function BetFilters({
               variant={approvalStatus === "pending" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                approvalStatus === "pending" && "bg-primary text-primary-foreground"
+                approvalStatus === "pending" &&
+                  "bg-primary text-primary-foreground"
               )}
               onClick={() => {
                 setApprovalStatus("pending");

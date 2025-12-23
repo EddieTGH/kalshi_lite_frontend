@@ -53,25 +53,25 @@ export function BetEndedDialog({
 
           {/* Summary Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="p-4 bg-muted rounded-lg border border-primary">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <span className="font-semibold text-green-900 dark:text-green-100">
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-foreground">
                   Winners
                 </span>
               </div>
-              <div className="text-3xl font-bold text-green-700 dark:text-green-300">
+              <div className="text-3xl font-bold text-primary">
                 {winners.length}
               </div>
             </div>
-            <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
+            <div className="p-4 bg-muted rounded-lg border border-destructive">
               <div className="flex items-center gap-2 mb-2">
-                <XCircle className="h-5 w-5 text-red-600" />
-                <span className="font-semibold text-red-900 dark:text-red-100">
+                <XCircle className="h-5 w-5 text-destructive" />
+                <span className="font-semibold text-foreground">
                   Losers
                 </span>
               </div>
-              <div className="text-3xl font-bold text-red-700 dark:text-red-300">
+              <div className="text-3xl font-bold text-destructive">
                 {losers.length}
               </div>
             </div>
@@ -80,7 +80,7 @@ export function BetEndedDialog({
           {/* Winners Section */}
           {winners.length > 0 && (
             <div className="space-y-2">
-              <h3 className="font-semibold text-lg flex items-center gap-2 text-green-700 dark:text-green-300">
+              <h3 className="font-semibold text-lg flex items-center gap-2 text-primary">
                 <CheckCircle2 className="h-5 w-5" />
                 Winners
               </h3>
@@ -88,7 +88,7 @@ export function BetEndedDialog({
                 {winners.map((payout) => (
                   <div
                     key={payout.user_id}
-                    className="p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg"
+                    className="p-3 bg-muted border border-primary rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-semibold">{payout.user_name}</span>
@@ -110,7 +110,7 @@ export function BetEndedDialog({
                       </div>
                       <div>
                         <span className="text-muted-foreground">Profit:</span>
-                        <div className="font-bold text-green-700 dark:text-green-300">
+                        <div className="font-bold text-primary">
                           +${payout.profit.toFixed(2)}
                         </div>
                       </div>
@@ -124,7 +124,7 @@ export function BetEndedDialog({
           {/* Losers Section */}
           {losers.length > 0 && (
             <div className="space-y-2">
-              <h3 className="font-semibold text-lg flex items-center gap-2 text-red-700 dark:text-red-300">
+              <h3 className="font-semibold text-lg flex items-center gap-2 text-destructive">
                 <XCircle className="h-5 w-5" />
                 Losers
               </h3>
@@ -132,7 +132,7 @@ export function BetEndedDialog({
                 {losers.map((payout) => (
                   <div
                     key={payout.user_id}
-                    className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg"
+                    className="p-3 bg-muted border border-destructive rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-semibold">{payout.user_name}</span>
@@ -154,7 +154,7 @@ export function BetEndedDialog({
                       </div>
                       <div>
                         <span className="text-muted-foreground">Loss:</span>
-                        <div className="font-bold text-red-700 dark:text-red-300">
+                        <div className="font-bold text-destructive">
                           ${payout.profit.toFixed(2)}
                         </div>
                       </div>

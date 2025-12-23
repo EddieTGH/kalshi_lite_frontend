@@ -36,7 +36,9 @@ export function LeaderboardTab() {
   if (loading && members.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-lg text-muted-foreground">Loading leaderboard...</div>
+        <div className="text-lg text-muted-foreground">
+          Loading leaderboard...
+        </div>
       </div>
     );
   }
@@ -148,7 +150,9 @@ export function LeaderboardTab() {
                             key={bet.bet_id}
                             // className="bg-card rounded-lg border p-3 space-y-2"
                             className={`bg-card rounded-lg border p-3 space-y-2 ${
-                              wasCorrect ? "bg-green-100" : "bg-red-100"
+                              wasCorrect
+                                ? "border-primary"
+                                : "border-destructive"
                             }`}
                           >
                             <div className="flex items-start justify-between gap-2">
@@ -177,9 +181,7 @@ export function LeaderboardTab() {
 
                             <div className="grid grid-cols-3 gap-2 text-xs">
                               <div>
-                                <p className="text-muted-foreground">
-                                  Bet Amount
-                                </p>
+                                <p className="text-foreground">Bet Amount</p>
                                 <p className="font-semibold">
                                   ${bet.amount_bet.toFixed(2)}
                                 </p>
@@ -191,16 +193,14 @@ export function LeaderboardTab() {
                                 </p>
                               </div> */}
                               <div>
-                                <p className="text-muted-foreground">
-                                  Profit/Loss
-                                </p>
+                                <p className="text-foreground">Profit/Loss</p>
                                 <p
                                   className={`font-semibold ${
                                     isWin
-                                      ? "text-green-600"
+                                      ? "text-primary"
                                       : isLoss
-                                      ? "text-red-600"
-                                      : "text-muted-foreground"
+                                      ? "text-destructive"
+                                      : "text-foreground"
                                   }`}
                                 >
                                   {bet.profit > 0 ? "+" : ""}$
@@ -208,9 +208,7 @@ export function LeaderboardTab() {
                                 </p>
                               </div>
                               <div>
-                                <p className="text-muted-foreground">
-                                  Resolved To
-                                </p>
+                                <p className="text-foreground">Resolved To</p>
                                 <p className="font-semibold uppercase">
                                   {bet.outcome}
                                 </p>

@@ -72,8 +72,8 @@ export default function DashboardPage() {
 
   if (isLoading || !user || !password || !currentParty) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-beige">
-        <div className="text-lg">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-lg text-foreground">Loading...</div>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function DashboardPage() {
   // If showing Create Bet form
   if (showCreateBet) {
     return (
-      <div className="min-h-screen bg-beige pb-20">
+      <div className="min-h-screen bg-background pb-20">
         <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
           {/* Back Button */}
           <Button
@@ -108,7 +108,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-beige pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Header with User Info and Logout */}
         <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
@@ -192,24 +192,24 @@ export default function DashboardPage() {
             </TabsContent>
 
           {/* Bottom Navigation Bar */}
-          <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-3 h-20 rounded-t-3xl border-t bg-white shadow-2xl px-2 gap-0 [&>*]:border-0">
+          <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-3 h-20 rounded-t-3xl border-t bg-card shadow-2xl px-2 gap-0 [&>*]:border-0">
             <TabsTrigger
               value="your-bets"
-              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-blue-100 data-[state=active]:text-blue-700 data-[state=inactive]:text-gray-500"
+              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
             >
               <User className="h-5 w-5" />
               <span className="text-xs font-medium">Your Bets</span>
             </TabsTrigger>
             <TabsTrigger
               value="browse-bets"
-              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-blue-100 data-[state=active]:text-blue-700 data-[state=inactive]:text-gray-500"
+              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
             >
               <Search className="h-5 w-5" />
               <span className="text-xs font-medium">Browse</span>
             </TabsTrigger>
             <TabsTrigger
               value="leaderboard"
-              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-blue-100 data-[state=active]:text-blue-700 data-[state=inactive]:text-gray-500"
+              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
             >
               <Trophy className="h-5 w-5" />
               <span className="text-xs font-medium">Leaderboard</span>

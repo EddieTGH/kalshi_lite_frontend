@@ -86,14 +86,14 @@ export default function PartySelectionPage() {
 
   if (isLoading || !user || !password) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-beige">
-        <div className="text-lg">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-lg text-foreground">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-beige">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between flex-wrap gap-4">

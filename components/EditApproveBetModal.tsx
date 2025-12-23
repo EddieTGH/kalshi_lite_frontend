@@ -142,7 +142,7 @@ export function EditApproveBetModal({
 
         <div className="space-y-4 py-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="bg-muted border border-destructive text-destructive px-4 py-3 rounded">
               {error}
             </div>
           )}

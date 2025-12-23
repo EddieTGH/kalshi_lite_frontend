@@ -341,8 +341,8 @@ export function BetCard({
                           <div
                             className={`font-bold ${
                               payout.profit >= 0
-                                ? "text-green-600"
-                                : "text-red-600"
+                                ? "text-primary"
+                                : "text-destructive"
                             }`}
                           >
                             {payout.profit >= 0 ? "+" : ""}$

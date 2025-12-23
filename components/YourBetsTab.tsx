@@ -86,9 +86,9 @@ export function YourBetsTab({
   return (
     <div className="space-y-4">
       {/* Available Money Display */}
-      <div className="bg-white rounded-lg border p-4">
+      <div className="bg-card rounded-lg border p-4">
         <p className="text-sm text-muted-foreground">Available Money</p>
-        <p className="text-2xl font-bold">
+        <p className="text-2xl font-bold text-card-foreground">
           ${availableMoney.toFixed(2)}
         </p>
       </div>
@@ -114,7 +114,7 @@ export function YourBetsTab({
 
       {/* Empty State */}
       {yourBets.length === 0 && yourPendingBets.length === 0 && (
-        <div className="text-center py-8 bg-white rounded-lg border">
+        <div className="text-center py-8 bg-card rounded-lg border">
           <p className="text-muted-foreground mb-4">
             You haven't invested in any bets yet
           </p>
@@ -126,11 +126,11 @@ export function YourBetsTab({
 
       {/* Your Created Pending Bets Section */}
       {yourPendingBets.length > 0 && (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border overflow-hidden">
           <Button
             variant="ghost"
             onClick={() => setPendingExpanded(!pendingExpanded)}
-            className="w-full justify-between p-4 h-auto hover:bg-gray-50"
+            className="w-full justify-between p-4 h-auto hover:bg-muted"
           >
             <span className="font-semibold text-base">
               Your Created Pending Bets ({yourPendingBets.length})
@@ -170,11 +170,11 @@ export function YourBetsTab({
 
       {/* Resolved Bets Section */}
       {resolvedBets.length > 0 && (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border overflow-hidden">
           <Button
             variant="ghost"
             onClick={() => setResolvedExpanded(!resolvedExpanded)}
-            className="w-full justify-between p-4 h-auto hover:bg-gray-50"
+            className="w-full justify-between p-4 h-auto hover:bg-muted"
           >
             <span className="font-semibold text-base">
               Resolved Bets ({resolvedBets.length})
@@ -214,11 +214,11 @@ export function YourBetsTab({
 
       {/* Unresolved Bets Section */}
       {unresolvedBets.length > 0 && (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border overflow-hidden">
           <Button
             variant="ghost"
             onClick={() => setUnresolvedExpanded(!unresolvedExpanded)}
-            className="w-full justify-between p-4 h-auto hover:bg-gray-50"
+            className="w-full justify-between p-4 h-auto hover:bg-muted"
           >
             <span className="font-semibold text-base">
               Unresolved Bets ({unresolvedBets.length})
