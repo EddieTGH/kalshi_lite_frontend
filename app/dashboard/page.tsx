@@ -12,13 +12,11 @@ import { YourBetsTab } from "@/components/YourBetsTab";
 import { CreateBetsTab } from "@/components/CreateBetsTab";
 import { PartyHeader } from "@/components/PartyHeader";
 import { BetsCacheProvider } from "@/lib/bets-cache-context";
-import { LogOut, ArrowLeft, User, Search, Trophy } from "lucide-react";
+import { LogOut, User, Search, Trophy, PlusCircle } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, password, currentParty, logout, isLoading } = useAuth();
   const router = useRouter();
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [showCreateBet, setShowCreateBet] = useState(false);
   const [currentTab, setCurrentTab] = useState("your-bets");
 
   // Redirect to login if not authenticated
@@ -37,29 +35,17 @@ export default function DashboardPage() {
 
   // Handle party change - refresh all data
   const handlePartyChange = () => {
-    setRefreshKey((prev) => prev + 1);
+    // Party change will trigger cache refresh automatically
   };
 
   // Handle bet created - refresh and return to your bets
   const handleBetCreated = () => {
-    setRefreshKey((prev) => prev + 1);
-    setShowCreateBet(false);
     setCurrentTab("your-bets");
   };
 
   // Handle navigate to browse bets
   const handleNavigateToBrowse = () => {
     setCurrentTab("browse-bets");
-  };
-
-  // Handle navigate to create bet
-  const handleNavigateToCreate = () => {
-    setShowCreateBet(true);
-  };
-
-  // Handle back from create bet
-  const handleBackFromCreate = () => {
-    setShowCreateBet(false);
   };
 
   // Handle logout
@@ -80,32 +66,6 @@ export default function DashboardPage() {
 
   // Check if user is admin of current party
   const isPartyAdmin = currentParty.is_admin;
-
-  // If showing Create Bet form
-  if (showCreateBet) {
-    return (
-      <div className="min-h-screen bg-background pb-20">
-        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
-          {/* Back Button */}
-          <Button
-            variant="ghost"
-            onClick={handleBackFromCreate}
-            className="mb-4 gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-
-          {/* Create Bet Form */}
-          <CreateBetsTab
-            partyId={currentParty.party_id}
-            password={password}
-            onBetCreated={handleBetCreated}
-          />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -165,7 +125,6 @@ export default function DashboardPage() {
                 password={password}
                 isAdmin={isPartyAdmin}
                 onNavigateToBrowse={handleNavigateToBrowse}
-                onNavigateToCreate={handleNavigateToCreate}
               />
             </TabsContent>
 
@@ -186,35 +145,53 @@ export default function DashboardPage() {
               )}
             </TabsContent>
 
+            {/* Create Bet Tab */}
+            <TabsContent value="create-bet">
+              <CreateBetsTab
+                partyId={currentParty.party_id}
+                password={password}
+                onBetCreated={handleBetCreated}
+              />
+            </TabsContent>
+
             {/* Leaderboard Tab */}
             <TabsContent value="leaderboard">
               <LeaderboardTab />
             </TabsContent>
 
-          {/* Bottom Navigation Bar */}
-          <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-3 h-20 rounded-t-3xl border-t bg-card shadow-2xl px-2 gap-0 [&>*]:border-0">
-            <TabsTrigger
-              value="your-bets"
-              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
-            >
-              <User className="h-5 w-5" />
-              <span className="text-xs font-medium">Your Bets</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="browse-bets"
-              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
-            >
-              <Search className="h-5 w-5" />
-              <span className="text-xs font-medium">Browse</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="leaderboard"
-              className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
-            >
-              <Trophy className="h-5 w-5" />
-              <span className="text-xs font-medium">Leaderboard</span>
-            </TabsTrigger>
-          </TabsList>
+            {/* Bottom Navigation Bar */}
+            <TabsList className="fixed bottom-0 left-0 right-0 grid w-full grid-cols-4 h-20 rounded-t-3xl border-t bg-card shadow-2xl px-2 gap-0 [&>*]:border-0">
+              <TabsTrigger
+                value="your-bets"
+                className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
+              >
+                <User className="h-5 w-5" />
+                <span className="text-xs font-medium">Your Bets</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="browse-bets"
+                className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
+              >
+                <Search className="h-5 w-5" />
+                <span className="text-xs font-medium">Browse Bets</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="create-bet"
+                className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
+              >
+                <PlusCircle className="h-5 w-5" />
+                <span className="text-xs font-medium">
+                  {isPartyAdmin ? "Create Bet" : "Suggest Bet"}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="leaderboard"
+                className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all border-0 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=inactive]:text-muted-foreground"
+              >
+                <Trophy className="h-5 w-5" />
+                <span className="text-xs font-medium">Leaderboard</span>
+              </TabsTrigger>
+            </TabsList>
           </Tabs>
         </BetsCacheProvider>
       </div>

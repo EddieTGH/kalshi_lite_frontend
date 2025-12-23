@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { BetWithPlacement, PartyMember } from "@/lib/types";
 import { useBetsCache } from "@/lib/bets-cache-context";
 import { BetCard } from "./BetCard";
 import { Button } from "@/components/ui/button";
@@ -14,7 +12,6 @@ interface YourBetsTabProps {
   password: string;
   isAdmin: boolean;
   onNavigateToBrowse: () => void; // Callback to navigate to Browse Bets tab
-  onNavigateToCreate: () => void; // Callback to navigate to Create Bet page
 }
 
 export function YourBetsTab({
@@ -23,10 +20,7 @@ export function YourBetsTab({
   password,
   isAdmin,
   onNavigateToBrowse,
-  onNavigateToCreate,
 }: YourBetsTabProps) {
-  const router = useRouter();
-
   /**
    * USE BETS CACHE
    * Read from shared cache - this provides instant display when switching tabs
@@ -93,30 +87,21 @@ export function YourBetsTab({
         </p>
       </div>
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button
-          onClick={onNavigateToCreate}
-          size="lg"
-          className="w-full h-12 text-base"
-        >
-          {isAdmin ? "Create Bet" : "Suggest Bet"}
-        </Button>
-        <Button
-          onClick={onNavigateToBrowse}
-          variant="outline"
-          size="lg"
-          className="w-full h-12 text-base"
-        >
-          Browse Bets
-        </Button>
-      </div>
+      {/* Browse Bets Button */}
+      {/* <Button
+        onClick={onNavigateToBrowse}
+        variant="outline"
+        size="lg"
+        className="w-full h-12 text-base"
+      >
+        Browse Bets
+      </Button> */}
 
       {/* Empty State */}
       {yourBets.length === 0 && yourPendingBets.length === 0 && (
         <div className="text-center py-8 bg-card rounded-lg border">
           <p className="text-muted-foreground mb-4">
-            You haven't invested in any bets yet
+            You haven&apos;t invested in any bets yet
           </p>
           <Button onClick={onNavigateToBrowse} variant="outline">
             Browse Available Bets
