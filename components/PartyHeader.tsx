@@ -15,6 +15,7 @@ interface PartyHeaderProps {
 }
 
 export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentParty, setCurrentParty, password } = useAuth();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
@@ -57,16 +58,11 @@ export function PartyHeader({ onPartyChange }: PartyHeaderProps) {
       <Card>
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-lg">{currentParty.name}</CardTitle>
-              {currentParty.is_admin && (
-                <Badge variant="default" className="text-xs">
-                  Admin
-                </Badge>
-              )}
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <CardTitle className="text-lg truncate">{currentParty.name}</CardTitle>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {/* Switch Party Button */}
               <Button
                 variant="outline"

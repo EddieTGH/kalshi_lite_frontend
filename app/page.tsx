@@ -14,12 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, Check } from "lucide-react";
 
 export default function LoginPage() {
@@ -94,9 +89,7 @@ export default function LoginPage() {
       setShowCodeDisplay(true);
     } catch (err: any) {
       if (err.response?.status === 400) {
-        setError(
-          err.response?.data?.message || "This name is already taken"
-        );
+        setError(err.response?.data?.message || "This name is already taken");
       } else {
         setError(
           err.response?.data?.message || "An error occurred. Please try again."
@@ -172,7 +165,7 @@ export default function LoginPage() {
                 </Button>
               </div>
               <p className="text-center text-sm text-muted-foreground">
-                You'll need this code to log in. Keep it safe!
+                You&apos;ll need this code to log in. Keep it safe!
               </p>
             </div>
             {error && (
@@ -182,7 +175,7 @@ export default function LoginPage() {
               onClick={handleSavedCode}
               className="w-full bg-primary hover:bg-primary/90"
             >
-              I've Saved It
+              I&apos;ve Saved It
             </Button>
           </CardContent>
         </Card>
