@@ -1,74 +1,62 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PartyMember } from "@/lib/types";
-import { getPartyMembers } from "@/app/api/parties";
+import { useBetsCache } from "@/lib/bets-cache-context";
 import { RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 
-interface LeaderboardTabProps {
-  partyId: number; // Party ID is now required
-  password: string;
-}
+// No props needed - all data comes from cache
+export function LeaderboardTab() {
+  /**
+   * USE BETS CACHE
+   * Read from shared cache - this provides instant display when switching tabs
+   * The cache is automatically refreshed every 30 seconds in the background
+   * Leaderboard data comes from cache.partyMembers
+   */
+  const { cache, loading, invalidateCache } = useBetsCache();
 
-export function LeaderboardTab({ partyId, password }: LeaderboardTabProps) {
-  const [members, setMembers] = useState<PartyMember[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // Extract party members from cache (sorted by total_money descending)
+  const members = cache.partyMembers;
+
+  // Local state for UI interactions only
   const [expandedMemberId, setExpandedMemberId] = useState<number | null>(null);
 
-  // Fetch party members (leaderboard)
-  const fetchLeaderboard = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const data = await getPartyMembers(partyId, password);
-      setMembers(data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to load leaderboard");
-    } finally {
-      setLoading(false);
-    }
-  }, [partyId, password]);
+  /**
+   * MANUAL REFRESH
+   * Triggered by the refresh button
+   * Calls silent cache invalidation (no loading spinner, smooth update)
+   */
+  const handleManualRefresh = async () => {
+    await invalidateCache();
+  };
 
-  useEffect(() => {
-    fetchLeaderboard();
-  }, [fetchLeaderboard]); // Re-fetch when party changes
-
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchLeaderboard();
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(intervalId);
-  }, [fetchLeaderboard]); // Re-create interval when fetchLeaderboard changes
+  // Show loading only on initial load (when cache is empty)
+  if (loading && members.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-lg text-muted-foreground">Loading leaderboard...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Leaderboard</h2>
         <Button
-          onClick={fetchLeaderboard}
-          disabled={loading}
+          onClick={handleManualRefresh}
           variant="outline"
           size="sm"
           className="gap-2"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      {error && (
-        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">
-          {error}
-        </div>
-      )}
-
-      {members.length === 0 && !loading && !error && (
+      {members.length === 0 && (
         <Card className="p-8 text-center text-muted-foreground">
           No members found in this party
         </Card>

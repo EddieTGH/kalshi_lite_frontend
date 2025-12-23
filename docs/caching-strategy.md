@@ -2,19 +2,22 @@
 
 ## Overview
 
-This document describes the caching strategy implemented for the "Your Bets" and "Browse Bets" tabs in the dashboard. The goal is to provide instant tab switching without loading spinners while keeping data fresh through background updates.
+This document describes the caching strategy implemented for all three tabs in the dashboard: **Your Bets**, **Browse Bets**, and **Leaderboard**. The goal is to provide instant tab switching without loading spinners while keeping data fresh through background updates.
 
 ## Problem Statement
 
 **Before caching:**
 - Switching between tabs showed a "Loading..." spinner every time
+- Each tab maintained its own data fetching and refresh intervals
 - Users had to wait for data to refetch even if they just viewed it seconds ago
+- Leaderboard had duplicate 30-second refresh logic
 - This created a poor user experience and unnecessary API calls
 
 **After caching:**
-- Tabs display cached data immediately when switching (no loading spinner)
-- Data stays fresh through background refreshing every 30 seconds
-- User actions (placing bets, etc.) trigger silent updates that don't disrupt the UI
+- **All three tabs** display cached data immediately when switching (no loading spinner)
+- Data stays fresh through a single centralized background refresh every 30 seconds
+- User actions (placing bets, etc.) trigger silent updates that update all tabs at once
+- Leaderboard uses the same `partyMembers` data that betting tabs need
 
 ## Architecture
 
@@ -37,10 +40,12 @@ interface BetsCache {
 **Why Single Cache?**
 - **Single source of truth**: One cache holds ALL data for all tabs
 - **Simpler architecture**: Less code, easier to maintain
-- **More efficient**: One set of API calls instead of multiple
+- **More efficient**: One set of API calls instead of multiple (was 3 separate fetches, now 1)
 - **Clean separation**: Cache stores raw data, components handle filtering/presentation
-- Example: YourBetsTab filters `bets.filter(b => b.user_placement.has_placed)`
-- Example: BrowseBetsTab filters `bets.filter(b => !b.user_placement.has_placed)`
+- **Examples:**
+  - YourBetsTab filters `bets.filter(b => b.user_placement.has_placed)`
+  - BrowseBetsTab filters `bets.filter(b => !b.user_placement.has_placed)`
+  - LeaderboardTab uses `partyMembers` directly (already sorted by backend)
 
 ### 2. Cache Lifecycle
 
@@ -180,8 +185,9 @@ export function YourBetsTab() {
 **Key Points:**
 - No local state for bets, members, or money
 - Reads directly from cache (instant display)
-- Calls `invalidateYourBets()` after user actions
+- Calls `invalidateCache()` after user actions
 - No loading spinners on tab switches
+- All three tabs (Your Bets, Browse Bets, Leaderboard) work the same way
 
 ## Benefits of This Approach
 
@@ -305,6 +311,7 @@ Potential improvements to the caching system:
 - `/components/YourBetsTab.tsx` - Your Bets tab consumer
 - `/components/ViewBetsTab.tsx` - Browse Bets (admin) consumer
 - `/components/BetsTab.tsx` - Browse Bets (non-admin) consumer
+- `/components/LeaderboardTab.tsx` - Leaderboard tab consumer
 
 ## Questions?
 

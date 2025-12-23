@@ -138,7 +138,7 @@ export default function DashboardPage() {
 
         {/*
           BETS CACHE PROVIDER
-          Wraps the tabs to provide shared caching for "Your Bets" and "Browse Bets"
+          Wraps the tabs to provide shared caching for all tabs (Your Bets, Browse Bets, Leaderboard)
           - Shows cached data immediately when switching tabs (no loading spinner)
           - Refreshes all data silently in background every 30 seconds
           - See /lib/bets-cache-context.tsx and /docs/caching-strategy.md for details
@@ -186,11 +186,7 @@ export default function DashboardPage() {
 
             {/* Leaderboard Tab */}
             <TabsContent value="leaderboard">
-              <LeaderboardTab
-                partyId={currentParty.party_id}
-                password={password}
-                key={refreshKey}
-              />
+              <LeaderboardTab />
             </TabsContent>
 
           {/* Bottom Navigation Bar */}
