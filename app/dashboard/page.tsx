@@ -131,10 +131,12 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        {/* Party Header with Dropdown and Details */}
-        <div className="mb-6">
-          <PartyHeader onPartyChange={handlePartyChange} />
-        </div>
+        {/* Party Header with Dropdown and Details - Only show on Your Bets tab */}
+        {currentTab === "your-bets" && (
+          <div className="mb-6">
+            <PartyHeader onPartyChange={handlePartyChange} />
+          </div>
+        )}
 
         {/*
           BETS CACHE PROVIDER
