@@ -10,7 +10,11 @@ import { EditApproveBetModal } from "./EditApproveBetModal";
 import { deletePlacedBet } from "@/app/api/userPlacedBets";
 import { approveBet, denyBet } from "@/app/api/bets";
 import { Trash2, ChevronDown, Clock, Check, X, Edit } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface BetCardProps {
   bet: BetWithPlacement;
@@ -130,7 +134,10 @@ export function BetCard({
           <div className="flex items-center gap-2">
             <span className="font-semibold">
               ${placement.amount?.toFixed(2)} on{" "}
-              <Badge variant={placement.decision === "yes" ? "default" : "secondary"} className="ml-1">
+              <Badge
+                variant={placement.decision === "yes" ? "default" : "secondary"}
+                className="ml-1"
+              >
                 {placement.decision?.toUpperCase()}
               </Badge>
             </span>
@@ -138,21 +145,28 @@ export function BetCard({
         </div>
 
         {placement.resolved ? (
-          <div className="space-y-1">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Result:</span>
-              <Badge variant={bet.outcome === "yes" ? "default" : "secondary"}>
-                {bet.outcome?.toUpperCase()}
-              </Badge>
+          <div className="flex gap-4 mt-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-muted-foreground text-sm whitespace-nowrap">
+                Payout:
+              </span>
+              <span className="font-semibold text-base">
+                ${placement.actual_payout?.toFixed(2)}
+              </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Payout:</span>
-              <span className="font-semibold">${placement.actual_payout?.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Profit/Loss:</span>
-              <span className={`font-bold ${placement.actual_profit! >= 0 ? "text-secondary" : "text-destructive"}`}>
-                {placement.actual_profit! >= 0 ? "+" : ""}${placement.actual_profit?.toFixed(2)}
+            <div className="flex items-center gap-2 min-w-0 ml-auto">
+              <span className="text-muted-foreground text-sm whitespace-nowrap">
+                Profit/Loss:
+              </span>
+              <span
+                className={`font-bold text-base ${
+                  placement.actual_profit! >= 0
+                    ? "text-secondary"
+                    : "text-destructive"
+                }`}
+              >
+                {placement.actual_profit! >= 0 ? "+" : ""}$
+                {placement.actual_profit?.toFixed(2)}
               </span>
             </div>
           </div>
@@ -160,7 +174,9 @@ export function BetCard({
           <div className="space-y-1">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Potential Payout:</span>
-              <span className="font-semibold">${placement.potential_payout?.toFixed(2)}</span>
+              <span className="font-semibold">
+                ${placement.potential_payout?.toFixed(2)}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Potential Profit:</span>
@@ -218,45 +234,61 @@ export function BetCard({
           </div>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className={`rounded-lg p-3 ${
-              !bet.in_progress && bet.outcome === "yes"
-                ? "bg-primary/20 border-2 border-primary"
-                : "bg-muted"
-            }`}>
-              <div className="text-xs text-muted-foreground mb-1">YES</div>
-              <div className={`text-lg sm:text-xl font-bold ${
+            <div
+              className={`rounded-lg p-3 ${
                 !bet.in_progress && bet.outcome === "yes"
-                  ? "text-primary"
-                  : "text-primary"
-              }`}>
+                  ? "bg-primary/20 border-2 border-primary"
+                  : "bg-muted"
+              }`}
+            >
+              <div className="text-xs text-muted-foreground mb-1">YES</div>
+              <div
+                className={`text-lg sm:text-xl font-bold ${
+                  !bet.in_progress && bet.outcome === "yes"
+                    ? "text-primary"
+                    : "text-primary"
+                }`}
+              >
                 {bet.odds_for_yes}%
               </div>
               {!bet.in_progress && bet.outcome === "yes" && (
-                <Badge variant="default" className="mt-1 text-xs">Winner</Badge>
+                <Badge variant="default" className="mt-1 text-xs">
+                  Winner
+                </Badge>
               )}
             </div>
-            <div className={`rounded-lg p-3 ${
-              !bet.in_progress && bet.outcome === "no"
-                ? "bg-secondary/20 border-2 border-secondary"
-                : "bg-muted"
-            }`}>
-              <div className="text-xs text-muted-foreground mb-1">NO</div>
-              <div className={`text-lg sm:text-xl font-bold ${
+            <div
+              className={`rounded-lg p-3 ${
                 !bet.in_progress && bet.outcome === "no"
-                  ? "text-secondary"
-                  : "text-secondary"
-              }`}>
+                  ? "bg-secondary/20 border-2 border-secondary"
+                  : "bg-muted"
+              }`}
+            >
+              <div className="text-xs text-muted-foreground mb-1">NO</div>
+              <div
+                className={`text-lg sm:text-xl font-bold ${
+                  !bet.in_progress && bet.outcome === "no"
+                    ? "text-secondary"
+                    : "text-secondary"
+                }`}
+              >
                 {bet.odds_for_no}%
               </div>
               {!bet.in_progress && bet.outcome === "no" && (
-                <Badge variant="secondary" className="mt-1 text-xs">Winner</Badge>
+                <Badge variant="secondary" className="mt-1 text-xs">
+                  Winner
+                </Badge>
               )}
             </div>
           </div>
 
           {/* Participant Details Dropdown for Resolved Bets */}
           {!bet.in_progress && bet.payouts && bet.payouts.length > 0 && (
-            <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen} className="mt-3">
+            <Collapsible
+              open={detailsOpen}
+              onOpenChange={setDetailsOpen}
+              className="mt-3"
+            >
               <CollapsibleTrigger asChild>
                 <Button
                   variant="outline"
@@ -264,7 +296,8 @@ export function BetCard({
                   className="w-full flex items-center justify-between"
                 >
                   <span className="text-sm font-medium">
-                    Bet Details ({bet.payouts.length} participant{bet.payouts.length !== 1 ? 's' : ''})
+                    Bet Details ({bet.payouts.length} participant
+                    {bet.payouts.length !== 1 ? "s" : ""})
                   </span>
                   <ChevronDown
                     className={`h-4 w-4 transition-transform ${
@@ -278,9 +311,13 @@ export function BetCard({
                   {bet.payouts.map((payout) => (
                     <div key={payout.user_id} className="p-3 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-sm">{payout.user_name}</span>
+                        <span className="font-semibold text-sm">
+                          {payout.user_name}
+                        </span>
                         <Badge
-                          variant={payout.decision === "yes" ? "default" : "secondary"}
+                          variant={
+                            payout.decision === "yes" ? "default" : "secondary"
+                          }
                           className="text-xs"
                         >
                           {payout.decision.toUpperCase()}
@@ -289,20 +326,27 @@ export function BetCard({
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div>
                           <span className="text-muted-foreground">Bet:</span>
-                          <div className="font-medium">${payout.amount_bet.toFixed(2)}</div>
+                          <div className="font-medium">
+                            ${payout.amount_bet.toFixed(2)}
+                          </div>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Payout:</span>
-                          <div className="font-medium">${payout.payout.toFixed(2)}</div>
+                          <div className="font-medium">
+                            ${payout.payout.toFixed(2)}
+                          </div>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Profit:</span>
                           <div
                             className={`font-bold ${
-                              payout.profit >= 0 ? "text-green-600" : "text-red-600"
+                              payout.profit >= 0
+                                ? "text-green-600"
+                                : "text-red-600"
                             }`}
                           >
-                            {payout.profit >= 0 ? "+" : ""}${payout.profit.toFixed(2)}
+                            {payout.profit >= 0 ? "+" : ""}$
+                            {payout.profit.toFixed(2)}
                           </div>
                         </div>
                       </div>
