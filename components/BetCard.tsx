@@ -217,8 +217,8 @@ export function BetCard({
             </div>
           )}
 
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0 pr-20">
+          <div className="flex items-start gap-3">
+            <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-base sm:text-lg leading-tight">
                 {bet.name}
               </h3>
@@ -226,11 +226,6 @@ export function BetCard({
                 {bet.description}
               </p>
             </div>
-            {!bet.in_progress && !isPending && (
-              <Badge variant="outline" className="flex-shrink-0">
-                Ended
-              </Badge>
-            )}
           </div>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
