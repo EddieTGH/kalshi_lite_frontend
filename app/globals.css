@@ -3,23 +3,23 @@
 :root {
   --background: #000000;
   --foreground: #ffffff;
-  --primary: #03DAC5;
+  --primary: #03dac5;
   --primary-foreground: #000000;
-  --secondary: #CF6679;
+  --secondary: #cf6679;
   --secondary-foreground: #ffffff;
-  --card: #121212;
+  --card: #1c1c1c;
   --card-foreground: #ffffff;
-  --border: #3700B3;
-  --input: #1e1e1e;
-  --ring: #03DAC5;
-  --muted: #1e1e1e;
+  --border: #3700b3;
+  --input: #414141;
+  --ring: #03dac5;
+  --muted: #414141;
   --muted-foreground: #a0a0a0;
-  --accent: #BB86FC;
+  --accent: #bb86fc;
   --accent-foreground: #000000;
-  --destructive: #CF6679;
+  --destructive: #cf6679;
   --destructive-foreground: #ffffff;
-  --purple: #BB86FC;
-  --indigo: #3700B3;
+  --purple: #bb86fc;
+  --indigo: #3700b3;
 }
 
 @theme inline {

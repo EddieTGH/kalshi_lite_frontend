@@ -93,12 +93,15 @@ export function PlaceBetDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(open) => {
-      // Prevent closing while loading
-      if (!loading) {
-        onOpenChange(open);
-      }
-    }}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        // Prevent closing while loading
+        if (!loading) {
+          onOpenChange(open);
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{bet.name}</DialogTitle>
@@ -117,20 +120,24 @@ export function PlaceBetDialog({
                 className={decision === "yes" ? "bg-primary" : ""}
                 onClick={() => setDecision("yes")}
               >
-                <div className="flex flex-col items-center w-full">
+                <div className={`flex flex-col items-center w-full`}>
                   <span className="font-semibold">YES</span>
-                  <span className="text-xs opacity-80">{bet.odds_for_yes}% odds</span>
+                  <span className="text-xs opacity-80">
+                    {bet.odds_for_yes}% odds
+                  </span>
                 </div>
               </Button>
               <Button
                 type="button"
                 variant={decision === "no" ? "default" : "outline"}
-                className={decision === "no" ? "bg-primary" : ""}
+                className={decision === "no" ? "bg-secondary" : ""}
                 onClick={() => setDecision("no")}
               >
-                <div className="flex flex-col items-center w-full">
+                <div className={`flex flex-col items-center w-full`}>
                   <span className="font-semibold">NO</span>
-                  <span className="text-xs opacity-80">{bet.odds_for_no}% odds</span>
+                  <span className="text-xs opacity-80">
+                    {bet.odds_for_no}% odds
+                  </span>
                 </div>
               </Button>
             </div>
@@ -166,16 +173,18 @@ export function PlaceBetDialog({
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Potential Profit:</span>
-                <span className={`font-semibold ${profit > 0 ? "text-secondary" : ""}`}>
+                <span
+                  className={`font-semibold ${
+                    profit > 0 ? "text-primary" : ""
+                  }`}
+                >
                   {profit > 0 ? "+" : ""}${profit.toFixed(2)}
                 </span>
               </div>
             </div>
           )}
 
-          {error && (
-            <div className="text-sm text-destructive">{error}</div>
-          )}
+          {error && <div className="text-sm text-destructive">{error}</div>}
         </div>
 
         <DialogFooter className="sm:justify-between gap-2">
