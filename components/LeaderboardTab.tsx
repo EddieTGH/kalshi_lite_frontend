@@ -149,7 +149,7 @@ export function LeaderboardTab() {
                           <div
                             key={bet.bet_id}
                             // className="bg-card rounded-lg border border-gray-500 p-3 space-y-2"
-                            className={`bg-card rounded-lg border p-3 space-y-2 ${
+                            className={`bg-muted rounded-lg border p-3 space-y-2 ${
                               wasCorrect
                                 ? "border-primary"
                                 : "border-destructive"

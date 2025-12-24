@@ -123,7 +123,7 @@ export function BetFilters({
   };
 
   return (
-    <Card className="p-4 space-y-4 bg-card dark:bg-gray-900">
+    <Card className="p-4 space-y-4 bg-card">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-lg">Filter Bets</h3>
@@ -146,23 +146,20 @@ export function BetFilters({
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full justify-between text-sm h-10 border-gray-500"
+                className="w-full justify-between text-sm h-10 bg-muted border-gray-500"
               >
                 <span className="truncate">{getPeopleDisplayText()}</span>
                 <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent
-              className="w-64 p-0 bg-card"
-              align="start"
-            >
+            <PopoverContent className="w-64 p-0 bg-card" align="start">
               <div className="p-3 border-b space-y-2">
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={selectAllPeople}
-                    className="flex-1 h-8 text-xs border-gray-500"
+                    className="flex-1 h-8 text-xs bg-muted border-gray-500"
                   >
                     Select All
                   </Button>
@@ -170,13 +167,13 @@ export function BetFilters({
                     variant="outline"
                     size="sm"
                     onClick={deselectAllPeople}
-                    className="flex-1 h-8 text-xs border-gray-500"
+                    className="flex-1 h-8 text-xs bg-muted border-gray-500"
                   >
                     Deselect All
                   </Button>
                 </div>
               </div>
-              <div className="max-h-64 overflow-y-auto p-2">
+              <div className="max-h-64 overflow-y-auto p-2 bg-card">
                 {partyMembers.map((member) => {
                   const isSelected = selectedPeople.includes(member.user_id);
                   return (
@@ -215,7 +212,7 @@ export function BetFilters({
               className={cn(
                 "flex-1 h-10",
                 resolveStatus === "all" && "bg-primary text-primary-foreground",
-                resolveStatus !== "all" && "border-gray-500"
+                resolveStatus !== "all" && "bg-muted border-gray-500"
               )}
               onClick={() => {
                 setResolveStatus("all");
@@ -230,7 +227,7 @@ export function BetFilters({
                 "flex-1 h-10",
                 resolveStatus === "active" &&
                   "bg-primary text-primary-foreground",
-                resolveStatus !== "active" && "border-gray-500"
+                resolveStatus !== "active" && "bg-muted border-gray-500"
               )}
               onClick={() => {
                 setResolveStatus("active");
@@ -245,7 +242,7 @@ export function BetFilters({
                 "flex-1 h-10",
                 resolveStatus === "resolved" &&
                   "bg-primary text-primary-foreground",
-                resolveStatus !== "resolved" && "border-gray-500"
+                resolveStatus !== "resolved" && "bg-muted border-gray-500"
               )}
               onClick={() => {
                 setResolveStatus("resolved");
@@ -267,8 +264,9 @@ export function BetFilters({
               variant={approvalStatus === "all" ? "default" : "outline"}
               className={cn(
                 "flex-1 h-10",
-                approvalStatus === "all" && "bg-primary text-primary-foreground",
-                approvalStatus !== "all" && "border-gray-500"
+                approvalStatus === "all" &&
+                  "bg-primary text-primary-foreground",
+                approvalStatus !== "all" && "bg-muted border-gray-500"
               )}
               onClick={() => {
                 setApprovalStatus("all");
@@ -283,7 +281,7 @@ export function BetFilters({
                 "flex-1 h-10",
                 approvalStatus === "approved" &&
                   "bg-primary text-primary-foreground",
-                approvalStatus !== "approved" && "border-gray-500"
+                approvalStatus !== "approved" && "bg-muted border-gray-500"
               )}
               onClick={() => {
                 setApprovalStatus("approved");
@@ -298,7 +296,7 @@ export function BetFilters({
                 "flex-1 h-10",
                 approvalStatus === "pending" &&
                   "bg-primary text-primary-foreground",
-                approvalStatus !== "pending" && "border-gray-500"
+                approvalStatus !== "pending" && "bg-muted border-gray-500"
               )}
               onClick={() => {
                 setApprovalStatus("pending");

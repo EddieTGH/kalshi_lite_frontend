@@ -99,11 +99,15 @@ export function YourBetsTab({
 
       {/* Empty State */}
       {yourBets.length === 0 && yourPendingBets.length === 0 && (
-        <div className="text-center py-8 bg-card rounded-lg border">
+        <div className="text-center py-8 bg-card rounded-lg border border-gray-500">
           <p className="text-muted-foreground mb-4">
             You haven&apos;t invested in any bets yet
           </p>
-          <Button onClick={onNavigateToBrowse} variant="outline" className="border-gray-500">
+          <Button
+            onClick={onNavigateToBrowse}
+            variant="outline"
+            className="border-gray-500"
+          >
             Browse Available Bets
           </Button>
         </div>

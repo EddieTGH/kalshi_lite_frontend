@@ -302,7 +302,7 @@ export function BetCard({
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-2">
-                <div className="border border-gray-500 rounded-lg divide-y">
+                <div className="border border-gray-500 bg-muted rounded-lg divide-y">
                   {bet.payouts.map((payout) => (
                     <div key={payout.user_id} className="p-3 space-y-1.5">
                       <div className="flex items-center justify-between">
