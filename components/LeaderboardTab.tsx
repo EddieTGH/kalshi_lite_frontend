@@ -22,6 +22,7 @@ export function LeaderboardTab() {
 
   // Local state for UI interactions only
   const [expandedMemberId, setExpandedMemberId] = useState<number | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   /**
    * MANUAL REFRESH
@@ -29,7 +30,9 @@ export function LeaderboardTab() {
    * Calls silent cache invalidation (no loading spinner, smooth update)
    */
   const handleManualRefresh = async () => {
+    setRefreshing(true);
     await invalidateCache();
+    setRefreshing(false);
   };
 
   // Show loading only on initial load (when cache is empty)
@@ -52,8 +55,9 @@ export function LeaderboardTab() {
           variant="outline"
           size="sm"
           className="gap-2"
+          disabled={refreshing}
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
           Refresh
         </Button>
       </div>
