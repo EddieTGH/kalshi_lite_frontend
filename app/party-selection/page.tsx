@@ -119,15 +119,23 @@ export default function PartySelectionPage() {
 
         {/* Action Buttons */}
         <div className="mb-6 flex gap-3 flex-wrap">
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className="gap-2"
-            disabled={user.remaining_hosts <= 0}
-          >
-            <Plus className="h-4 w-4" />
-            Create Party{" "}
-            {user.remaining_hosts > 0 && `(${user.remaining_hosts} remaining)`}
-          </Button>
+          <div className="relative group inline-block">
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="gap-2"
+              disabled={user.remaining_hosts <= 0}
+            >
+              <Plus className="h-4 w-4" />
+              Create Party{" "}
+              {user.remaining_hosts > 0 &&
+                `(${user.remaining_hosts} remaining)`}
+            </Button>
+            {user.remaining_hosts <= 0 && (
+              <div className="absolute z-10 left-1/2 -translate-x-1/2 mt-2 min-w-max px-3 py-2 rounded bg-muted text-muted-foreground shadow animate-fade-in opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-xs whitespace-nowrap">
+                Reach out to Ed if you're looking to host
+              </div>
+            )}
+          </div>
           <Button
             onClick={() => setShowJoinModal(true)}
             variant="outline"

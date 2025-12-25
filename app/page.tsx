@@ -136,7 +136,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold text-primary">
-              Welcome to Kalshi Lite!
+              Welcome to Odds On!
             </CardTitle>
             <CardDescription className="text-base">
               Your account has been created
@@ -188,10 +188,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-primary">
-            Kalshi Lite
+            Odds On
           </CardTitle>
           <CardDescription className="text-base">
-            Login or create a new account
+            Predict. Compete. Collect.
           </CardDescription>
         </CardHeader>
         <CardContent>
