@@ -24,8 +24,10 @@ export function BetEndedDialog({
 }: BetEndedDialogProps) {
   if (!betResult) return null;
 
-  const winners = betResult.payouts.filter((p) => p.profit > 0);
-  const losers = betResult.payouts.filter((p) => p.profit <= 0);
+  const isVoid = betResult.outcome === "void";
+  const winners = isVoid ? [] : betResult.payouts.filter((p) => p.profit > 0);
+  const losers = isVoid ? [] : betResult.payouts.filter((p) => p.profit <= 0);
+  const voidParticipants = isVoid ? betResult.payouts : [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -44,34 +46,55 @@ export function BetEndedDialog({
           <div className="flex items-center justify-center gap-3 p-4 bg-muted rounded-lg">
             <span className="text-lg font-semibold">Final Outcome:</span>
             <Badge
-              variant={betResult.outcome === "yes" ? "default" : "secondary"}
-              className="text-lg px-4 py-2"
+              variant={
+                betResult.outcome === "yes"
+                  ? "default"
+                  : betResult.outcome === "no"
+                  ? "secondary"
+                  : "outline"
+              }
+              className={`text-lg px-4 py-2 ${
+                betResult.outcome === "void"
+                  ? "bg-[hsl(var(--void))] text-white"
+                  : ""
+              }`}
             >
               {betResult.outcome?.toUpperCase()}
             </Badge>
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-muted rounded-lg border border-gray-500 border-primary">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">Winners</span>
+          {!isVoid ? (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-muted rounded-lg border border-gray-500 border-primary">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  <span className="font-semibold text-foreground">Winners</span>
+                </div>
+                <div className="text-3xl font-bold text-primary">
+                  {winners.length}
+                </div>
               </div>
-              <div className="text-3xl font-bold text-primary">
-                {winners.length}
+              <div className="p-4 bg-muted rounded-lg border border-gray-500 border-destructive">
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-destructive" />
+                  <span className="font-semibold text-foreground">Losers</span>
+                </div>
+                <div className="text-3xl font-bold text-destructive">
+                  {losers.length}
+                </div>
               </div>
             </div>
-            <div className="p-4 bg-muted rounded-lg border border-gray-500 border-destructive">
-              <div className="flex items-center gap-2 mb-2">
-                <XCircle className="h-5 w-5 text-destructive" />
-                <span className="font-semibold text-foreground">Losers</span>
-              </div>
-              <div className="text-3xl font-bold text-destructive">
-                {losers.length}
+          ) : (
+            <div className="p-4 bg-muted rounded-lg border-2 border-[hsl(var(--void))]">
+              <div className="text-center">
+                <p className="text-lg font-semibold mb-2">Bet Voided</p>
+                <p className="text-sm text-muted-foreground">
+                  All participants have been refunded their original bet amounts
+                </p>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Winners Section */}
           {winners.length > 0 && (
@@ -163,6 +186,55 @@ export function BetEndedDialog({
                       <div>
                         <span className="text-muted-foreground">Loss:</span>
                         <div className="font-bold text-destructive">
+                          ${payout.profit.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Void Participants Section */}
+          {voidParticipants.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="font-semibold text-lg flex items-center gap-2" style={{ color: "hsl(var(--void))" }}>
+                Refunded Participants
+              </h3>
+              <div className="space-y-2">
+                {voidParticipants.map((payout) => (
+                  <div
+                    key={payout.user_id}
+                    className="p-3 bg-muted border border-gray-500 border-[hsl(var(--void))] rounded-lg"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-semibold">{payout.user_name}</span>
+                      <Badge
+                        variant={
+                          payout.decision === "yes" ? "default" : "secondary"
+                        }
+                        className="text-xs"
+                      >
+                        {payout.decision.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Bet:</span>
+                        <div className="font-medium">
+                          ${payout.amount_bet.toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Refund:</span>
+                        <div className="font-medium">
+                          ${payout.payout.toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Profit:</span>
+                        <div className="font-bold" style={{ color: "hsl(var(--void))" }}>
                           ${payout.profit.toFixed(2)}
                         </div>
                       </div>

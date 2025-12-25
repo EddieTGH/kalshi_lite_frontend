@@ -48,7 +48,9 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
   const [showAll, setShowAll] = useState(false);
   const [endBetDialogOpen, setEndBetDialogOpen] = useState(false);
   const [selectedBetId, setSelectedBetId] = useState<number | null>(null);
-  const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no">("yes");
+  const [endBetOutcome, setEndBetOutcome] = useState<"yes" | "no" | "void">(
+    "yes"
+  );
   const [endingBet, setEndingBet] = useState(false);
   const [betEndedDialogOpen, setBetEndedDialogOpen] = useState(false);
   const [betEndedResult, setBetEndedResult] = useState<EndBetResponse | null>(
@@ -266,7 +268,7 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
 
           <div className="py-4">
             <Label className="mb-3 block">What was the outcome?</Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <Button
                 type="button"
                 variant={endBetOutcome === "yes" ? "default" : "outline"}
@@ -282,6 +284,14 @@ export function ViewBetsTab({ userId, partyId, password }: ViewBetsTabProps) {
                 onClick={() => setEndBetOutcome("no")}
               >
                 NO
+              </Button>
+              <Button
+                type="button"
+                variant={endBetOutcome === "void" ? "default" : "outline"}
+                className={endBetOutcome === "void" ? "bg-purple" : ""}
+                onClick={() => setEndBetOutcome("void")}
+              >
+                VOID
               </Button>
             </div>
           </div>

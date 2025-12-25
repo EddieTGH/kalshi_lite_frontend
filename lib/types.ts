@@ -33,7 +33,7 @@ export interface BetHistory {
   bet_description: string;
   odds_for_yes: number;
   odds_for_no: number;
-  outcome: "yes" | "no";
+  outcome: "yes" | "no" | "void";
   amount_bet: number;
   decision: "yes" | "no";
   payout: number;
@@ -63,7 +63,7 @@ export interface Bet {
   odds_for_no: number; // Calculated: 100 - odds_for_yes
   people_involved: number[]; // Array of user_ids
   in_progress: boolean;
-  outcome: "yes" | "no" | null;
+  outcome: "yes" | "no" | "void" | null;
   status: "pending" | "approved"; // Bet approval status
   created_by?: number; // User ID who created the bet
   approved_by?: number; // User ID who approved the bet (for admins)
@@ -180,7 +180,7 @@ export interface PlaceBetRequest {
 }
 
 export interface EndBetRequest {
-  outcome: "yes" | "no";
+  outcome: "yes" | "no" | "void";
 }
 
 export interface ApproveBetRequest {

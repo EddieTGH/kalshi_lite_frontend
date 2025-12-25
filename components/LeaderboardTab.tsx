@@ -145,6 +145,7 @@ export function LeaderboardTab() {
                     </h3>
                     <div className="space-y-2">
                       {member.bet_history!.map((bet) => {
+                        const isVoid = bet.outcome === "void";
                         const isWin = bet.profit > 0;
                         const isLoss = bet.profit < 0;
                         const wasCorrect = bet.decision === bet.outcome;
@@ -154,7 +155,9 @@ export function LeaderboardTab() {
                             key={bet.bet_id}
                             // className="bg-card rounded-lg border border-gray-500 p-3 space-y-2"
                             className={`bg-muted rounded-lg border p-3 space-y-2 ${
-                              wasCorrect
+                              isVoid
+                                ? "border-[hsl(var(--void))]"
+                                : wasCorrect
                                 ? "border-primary"
                                 : "border-destructive"
                             }`}
@@ -200,7 +203,9 @@ export function LeaderboardTab() {
                                 <p className="text-foreground">Profit/Loss</p>
                                 <p
                                   className={`font-semibold ${
-                                    isWin
+                                    isVoid
+                                      ? "text-[hsl(var(--void))]"
+                                      : isWin
                                       ? "text-primary"
                                       : isLoss
                                       ? "text-destructive"
@@ -213,7 +218,11 @@ export function LeaderboardTab() {
                               </div>
                               <div>
                                 <p className="text-foreground">Resolved To</p>
-                                <p className="font-semibold uppercase">
+                                <p
+                                  className={`font-semibold uppercase ${
+                                    isVoid ? "text-[hsl(var(--void))]" : ""
+                                  }`}
+                                >
                                   {bet.outcome}
                                 </p>
                               </div>

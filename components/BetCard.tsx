@@ -277,6 +277,17 @@ export function BetCard({
             </div>
           </div>
 
+          {/* Void Badge - Show when bet is voided */}
+          {!bet.in_progress && bet.outcome === "void" && (
+            <div className="rounded-lg p-3 bg-[hsl(var(--void))]/20 border-2 border-[hsl(var(--void))]">
+              <div className="flex items-center justify-center">
+                <Badge className="bg-[hsl(var(--void))] text-white">
+                  BET VOIDED - All bets refunded
+                </Badge>
+              </div>
+            </div>
+          )}
+
           {/* Participant Details Dropdown for Resolved Bets */}
           {!bet.in_progress && bet.payouts && bet.payouts.length > 0 && (
             <Collapsible
